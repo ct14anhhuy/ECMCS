@@ -11,7 +11,7 @@ namespace ECMCS.Download
 {
     public class FileDownloader
     {
-        private string _path = ConfigurationManager.AppSettings["SaveFilePath"];
+        private string _path = ConfigurationManager.AppSettings["SaveFilePath.Monitor"];
         private string _url;
 
         public FileDownloader(string url)
@@ -27,7 +27,7 @@ namespace ECMCS.Download
             fileInfo.FilePath = FileHelper.CreateSubPath(_path, subPath) + Path.GetFileName(fileInfo.Url);
             client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
             FileHelper.OpenFileWithDefaultProgram(fileInfo.FilePath);
-            JsonHelper.AddObjectsToJson(ConfigurationManager.AppSettings["JsonFilePath"], fileInfo);
+            JsonHelper.Add(fileInfo);
         }
 
         private FileInfoDTO ExtractFromString(string source, string start, string end)
@@ -40,6 +40,7 @@ namespace ECMCS.Download
                 strs.Add(m.Groups[1].Value);
             }
             fileInfo.Url = strs[0].Replace("%5C", @"\");
+            fileInfo.FileName = Path.GetFileName(fileInfo.Url);
             fileInfo.Owner = strs[1];
             fileInfo.Version = strs[2];
             return fileInfo;

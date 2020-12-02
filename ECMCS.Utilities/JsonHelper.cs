@@ -1,55 +1,96 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
+using System.Linq;
 
 namespace ECMCS.Utilities
 {
     public static class JsonHelper
     {
-        public static JObject Read(string filePath)
-        {
-            filePath = AppDomain.CurrentDomain.BaseDirectory + filePath;
-            using (StreamReader file = File.OpenText(filePath))
-            {
-                using (JsonTextReader reader = new JsonTextReader(file))
-                {
-                    JObject jObject = (JObject)JToken.ReadFrom(reader);
-                    return jObject;
-                }
-            }
-        }
+        private static string _jsonFile = ConfigurationManager.AppSettings["SaveFilePath.Monitor"] + ConfigurationManager.AppSettings["JsonFileName"];
 
-        public static void Write(string filePath, string key, object value)
+        public static List<TEntity> Get<TEntity>(Func<TEntity, bool> condition = null)
         {
-            filePath = AppDomain.CurrentDomain.BaseDirectory + filePath;
-            JObject jOject = new JObject(new JProperty(key, value));
-            File.WriteAllText(filePath, jOject.ToString());
-            using (StreamWriter file = File.CreateText(filePath))
+            List<TEntity> objs;
+            using (StreamReader sr = new StreamReader(_jsonFile))
             {
-                using (JsonTextWriter writer = new JsonTextWriter(file))
-                {
-                    jOject.WriteTo(writer);
-                }
-            }
-        }
-
-        public static void AddObjectsToJson<T>(string filePath, T entity)
-        {
-            string newJson;
-            using (StreamReader r = new StreamReader(filePath))
-            {
-                string json = r.ReadToEnd();
-                List<T> objs = JsonConvert.DeserializeObject<List<T>>(json);
+                string json = sr.ReadToEnd();
+                objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
                 if (objs == null)
                 {
-                    objs = new List<T>();
+                    return objs;
                 }
+                if (condition == null)
+                {
+                    return objs;
+                }
+                else
+                {
+                    return objs.Where(condition).ToList();
+                }
+            }
+        }
+
+        public static void Add<TEntity>(TEntity entity) where TEntity : class
+        {
+            string newJson;
+            using (StreamReader sr = new StreamReader(_jsonFile))
+            {
+                string json = sr.ReadToEnd();
+                List<TEntity> objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
+                if (objs == null)
+                {
+                    objs = new List<TEntity>();
+                }
+
                 objs.Add(entity);
                 newJson = JsonConvert.SerializeObject(objs);
             }
-            File.WriteAllText(filePath, newJson);
+            File.WriteAllText(_jsonFile, newJson);
+        }
+
+        public static void Update<TEntity>(TEntity entity, Predicate<TEntity> match) where TEntity : class
+        {
+            string newJson;
+            using (StreamReader sr = new StreamReader(_jsonFile))
+            {
+                string json = sr.ReadToEnd();
+                List<TEntity> objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
+                if (objs == null)
+                {
+                    return;
+                }
+                int idx = objs.FindIndex(match);
+                if (idx >= 0)
+                {
+                    objs[idx] = entity;
+                }
+                newJson = JsonConvert.SerializeObject(objs);
+            }
+            File.WriteAllText(_jsonFile, newJson);
+        }
+
+        public static void Remove<TEntity>(Predicate<TEntity> match) where TEntity : class
+        {
+            string newJson;
+            using (StreamReader sr = new StreamReader(_jsonFile))
+            {
+                string json = sr.ReadToEnd();
+                List<TEntity> objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
+                if (objs == null)
+                {
+                    return;
+                }
+                int idx = objs.FindIndex(match);
+                if (idx >= 0)
+                {
+                    objs.RemoveAt(idx);
+                }
+                newJson = JsonConvert.SerializeObject(objs);
+            }
+            File.WriteAllText(_jsonFile, newJson);
         }
     }
 }
