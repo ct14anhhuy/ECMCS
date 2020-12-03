@@ -39,10 +39,11 @@ namespace ECMCS.Download
             {
                 strs.Add(m.Groups[1].Value);
             }
-            fileInfo.Url = strs[0].Replace("%5C", @"\");
+            fileInfo.Id = int.Parse(strs[0]);
+            fileInfo.Url = strs[1].Replace("%5C", @"\");
             fileInfo.FileName = Path.GetFileName(fileInfo.Url);
-            fileInfo.Owner = strs[1];
-            fileInfo.Version = strs[2];
+            fileInfo.Owner = strs[2];
+            fileInfo.Version = strs[3];
             return fileInfo;
         }
     }

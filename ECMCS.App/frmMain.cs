@@ -34,7 +34,6 @@ namespace ECMCS.App
             var watcher = new FileSystemWatcher();
             watcher.Path = path;
             watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-
             watcher.Filter = "*.*";
             watcher.EnableRaisingEvents = true;
             watcher.IncludeSubdirectories = true;
@@ -62,7 +61,20 @@ namespace ECMCS.App
             frmUpdateVersion frm = new frmUpdateVersion();
             var delSendMsg = new SendMessenge<FileInfoDTO>(frm.EventListener);
             delSendMsg(fileInfo);
+            frm.OnUploadClosed += Frm_OnUploadClosed;
             frm.ShowDialog();
+        }
+
+        private void Frm_OnUploadClosed(object sender, FileInfoDTO e)
+        {
+            if (e.IsUploaded)
+            {
+                ShowBalloonTip("Info", $"File {e.FileName} successfully uploaded", ToolTipIcon.Info);
+            }
+            else
+            {
+                ShowBalloonTip("Info", $"File {e.FileName} has not uploaded", ToolTipIcon.Warning);
+            }
         }
 
         protected override void SetVisibleCore(bool value)

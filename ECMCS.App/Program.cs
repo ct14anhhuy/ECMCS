@@ -1,19 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace ECMCS.App
 {
-    static class Program
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        private static void Main()
         {
+            if (PriorProcess() != null)
+            {
+                MessageBox.Show("Another instance of ECM app is already running.");
+                return;
+            }
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
+        }
+
+        private static Process PriorProcess()
+        {
+            Process curr = Process.GetCurrentProcess();
+            Process[] procs = Process.GetProcessesByName(curr.ProcessName);
+            foreach (Process p in procs)
+            {
+                if (p.Id != curr.Id && p.MainModule.FileName == curr.MainModule.FileName)
+                {
+                    return p;
+                }
+            }
+            return null;
         }
     }
 }
