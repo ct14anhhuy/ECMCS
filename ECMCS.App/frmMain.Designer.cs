@@ -33,7 +33,6 @@ namespace ECMCS.App
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.stackToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exitECMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenu.SuspendLayout();
@@ -49,27 +48,20 @@ namespace ECMCS.App
             // contextMenu
             // 
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stackToolStripMenuItem,
             this.toolStripSeparator1,
             this.exitECMToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(122, 54);
-            // 
-            // stackToolStripMenuItem
-            // 
-            this.stackToolStripMenuItem.Name = "stackToolStripMenuItem";
-            this.stackToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
-            this.stackToolStripMenuItem.Text = "Stack";
+            this.contextMenu.Size = new System.Drawing.Size(181, 54);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(118, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // exitECMToolStripMenuItem
             // 
             this.exitECMToolStripMenuItem.Name = "exitECMToolStripMenuItem";
-            this.exitECMToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
+            this.exitECMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitECMToolStripMenuItem.Text = "Exit ECM";
             this.exitECMToolStripMenuItem.Click += new System.EventHandler(this.exitECMToolStripMenuItem_Click);
             // 
@@ -91,7 +83,6 @@ namespace ECMCS.App
         private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem exitECMToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem stackToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

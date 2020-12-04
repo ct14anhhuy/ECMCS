@@ -202,8 +202,10 @@ namespace ECMCS.App
             // 
             // frmUpdateVersion
             // 
+            this.AcceptButton = this.btnConfirm;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(448, 328);
             this.Controls.Add(this.metroLabel3);
             this.Controls.Add(this.txtFileName);

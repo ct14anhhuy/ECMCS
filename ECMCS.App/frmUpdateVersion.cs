@@ -45,12 +45,19 @@ namespace ECMCS.App
 
         private void btnConfirm_Click(object sender, EventArgs e)
         {
-            UploadFile();
-            _fileInfo.IsUploaded = true;
-            this.Close();
+            try
+            {
+                UploadFile();
+                _fileInfo.IsUploaded = true;
+                this.Close();
+            }
+            catch
+            {
+                MessageBox.Show("An error occurred during processing", "Warning");
+            }
         }
 
-        private async void UploadFile()
+        private void UploadFile()
         {
             var fileUpload = new FileUploadDTO();
             fileUpload.Id = _fileInfo.Id;
@@ -63,8 +70,8 @@ namespace ECMCS.App
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var url = "http://localhost:53115/api/file/upload";
             var client = new HttpClient();
-            var response = await client.PostAsync(url, data);
-            string result = response.Content.ReadAsStringAsync().Result;
+            var response = client.PostAsync(url, data).Result;
+            _ = response.Content.ReadAsStringAsync().Result;
         }
 
         private void frmUpdateVersion_FormClosing(object sender, FormClosingEventArgs e)
@@ -81,7 +88,7 @@ namespace ECMCS.App
 
         private void frmUpdateVersion_FormClosed(object sender, FormClosedEventArgs e)
         {
-            uploadClosed(_fileInfo);
+            UploadClosed(_fileInfo);
         }
 
         private event EventHandler<FileInfoDTO> _onUploadClosed;
@@ -98,7 +105,7 @@ namespace ECMCS.App
             }
         }
 
-        private void uploadClosed(FileInfoDTO fileInfo)
+        private void UploadClosed(FileInfoDTO fileInfo)
         {
             if (_onUploadClosed != null)
             {

@@ -44,7 +44,6 @@ namespace ECMCS.Utilities
                 {
                     objs = new List<TEntity>();
                 }
-
                 objs.Add(entity);
                 newJson = JsonConvert.SerializeObject(objs);
             }
