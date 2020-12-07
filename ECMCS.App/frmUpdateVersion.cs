@@ -68,7 +68,7 @@ namespace ECMCS.App
 
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var url = "http://localhost:53115/api/file/upload";
+            var url = "http://172.25.216.127:8081/api/file/upload";
             var client = new HttpClient();
             var response = client.PostAsync(url, data).Result;
             _ = response.Content.ReadAsStringAsync().Result;
