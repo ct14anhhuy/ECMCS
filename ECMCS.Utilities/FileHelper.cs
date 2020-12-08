@@ -38,7 +38,7 @@ namespace ECMCS.Utilities
             return false;
         }
 
-        public static void OpenFileWithDefaultProgram(string path)
+        public static void OpenFile(string path)
         {
             using (Process process = new Process())
             {
@@ -48,15 +48,41 @@ namespace ECMCS.Utilities
             }
         }
 
-        public static string CreateSubPath(string path, string subPath)
+        public static string CreatePath(string path, string subPath)
         {
             string fullPath = path + subPath;
-            bool exists = Directory.Exists(path + subPath);
-            if (!exists)
+            DirectoryInfo directoryInfo = new DirectoryInfo(fullPath);
+            if (!directoryInfo.Exists)
             {
-                Directory.CreateDirectory(path + subPath);
+                directoryInfo.Create();
             }
             return fullPath;
+        }
+
+        public static void CreatePath(string path, params string[] subPaths)
+        {
+            if (subPaths.Length == 0)
+            {
+                throw new ArgumentNullException($"{nameof(subPaths)} can not null");
+            }
+            for (int i = 0; i < subPaths.Length; i++)
+            {
+                string fullPath = path + subPaths[i];
+                DirectoryInfo directoryInfo = new DirectoryInfo(fullPath);
+                if (!directoryInfo.Exists)
+                {
+                    directoryInfo.Create();
+                }
+            }
+        }
+
+        public static void CreateFile(string filePath)
+        {
+            FileInfo fileInfo = new FileInfo(filePath);
+            if (!fileInfo.Exists)
+            {
+                fileInfo.Create();
+            }
         }
     }
 }

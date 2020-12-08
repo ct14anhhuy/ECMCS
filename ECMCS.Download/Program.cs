@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace ECMCS.Download
@@ -16,6 +17,10 @@ namespace ECMCS.Download
         private static void Main(string[] args)
         {
             ShowWindow(GetConsoleWindow(), SW_HIDE);
+            if (Process.GetProcessesByName("ECMCS.App").Length == 0)
+            {
+                Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe");
+            }
             FileDownloader downloader = new FileDownloader(args[0]);
             downloader.Download();
         }

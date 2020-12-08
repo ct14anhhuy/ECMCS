@@ -2,7 +2,6 @@
 using ECMCS.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -11,7 +10,7 @@ namespace ECMCS.Download
 {
     public class FileDownloader
     {
-        private string _path = ConfigurationManager.AppSettings["SaveFilePath.Monitor"];
+        private string _path = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor");
         private string _url;
 
         public FileDownloader(string url)
@@ -24,9 +23,9 @@ namespace ECMCS.Download
             string subPath = $@"ECM{DateTime.Now:ddMMyyyyHHmmssfff}\";
             var fileInfo = ExtractFromString(_url, "[", "]");
             WebClient client = new WebClient();
-            fileInfo.FilePath = FileHelper.CreateSubPath(_path, subPath) + Path.GetFileName(fileInfo.Url);
+            fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
             client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
-            FileHelper.OpenFileWithDefaultProgram(fileInfo.FilePath);
+            FileHelper.OpenFile(fileInfo.FilePath);
             JsonHelper.Add(fileInfo);
         }
 

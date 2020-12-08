@@ -1,7 +1,6 @@
 ﻿using ECMCS.DTO;
 using ECMCS.Utilities;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,13 +11,25 @@ namespace ECMCS.App
 
     public partial class frmMain : Form
     {
-        private static string[] extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
+        private static string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
+        private string _monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor");
 
         public frmMain()
         {
             InitializeComponent();
+            CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
-            Watch(ConfigurationManager.AppSettings["SaveFilePath.Monitor"]);
+            Watch(_monitorPath);
+        }
+
+        private static void CreateResources()
+        {
+            string rootPath = ConfigHelper.ReadSetting("SaveFilePath.Root");
+            string monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Monitor");
+            string viewPath = ConfigHelper.ReadSetting("SaveFilePath.View");
+            string jsonFileName = ConfigHelper.ReadSetting("JsonFileName");
+            FileHelper.CreatePath(rootPath, monitorPath, viewPath);
+            FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
         }
 
         private void ShowBalloonTip(string title, string messenge, ToolTipIcon icon)
@@ -43,9 +54,9 @@ namespace ECMCS.App
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (extensions.Any(ext.Equals))
+            if (_extensions.Any(ext.Equals))
             {
-                string subPath = e.Name.Replace("~$", string.Empty);
+                string subPath = Path.GetDirectoryName(e.FullPath);
                 var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).SingleOrDefault();
                 if (fileInfo != null)
                 {
@@ -58,7 +69,7 @@ namespace ECMCS.App
 
         private void OpenUpdateFrm(FileInfoDTO fileInfo)
         {
-            frmUpdateVersion frm = new frmUpdateVersion();
+            var frm = new frmUpdateVersion();
             var delSendMsg = new SendMessenge<FileInfoDTO>(frm.EventListener);
             delSendMsg(fileInfo);
             frm.OnUploadClosed += Frm_OnUploadClosed;

@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 
@@ -9,7 +8,7 @@ namespace ECMCS.Utilities
 {
     public static class JsonHelper
     {
-        private static string _jsonFile = ConfigurationManager.AppSettings["SaveFilePath.Monitor"] + ConfigurationManager.AppSettings["JsonFileName"];
+        private static string _jsonFile = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor") + ConfigHelper.ReadSetting("JsonFileName");
 
         public static List<TEntity> Get<TEntity>(Func<TEntity, bool> condition = null)
         {
