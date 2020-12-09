@@ -11,24 +11,29 @@ namespace ECMCS.App
 
     public partial class frmMain : Form
     {
-        private static string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
+        private string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
         private string _monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor");
+        private string _protocolName = ConfigHelper.ReadSetting("Protocol.Name");
+        private string _downloadAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Download.exe";
+        private bool _isHidden = bool.Parse(ConfigHelper.ReadSetting("IsHiddenFolder"));
 
         public frmMain()
         {
             InitializeComponent();
+            URLProtocolHelper.Create(_protocolName, _downloadAppPath);
             CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
             Watch(_monitorPath);
         }
 
-        private static void CreateResources()
+        private void CreateResources()
         {
             string rootPath = ConfigHelper.ReadSetting("SaveFilePath.Root");
             string monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Monitor");
             string viewPath = ConfigHelper.ReadSetting("SaveFilePath.View");
             string jsonFileName = ConfigHelper.ReadSetting("JsonFileName");
             FileHelper.CreatePath(rootPath, monitorPath, viewPath);
+            FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), _isHidden);
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
         }
 

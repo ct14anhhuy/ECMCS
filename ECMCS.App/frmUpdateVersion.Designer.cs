@@ -223,7 +223,6 @@ namespace ECMCS.App
             this.Name = "frmUpdateVersion";
             this.Resizable = false;
             this.Text = "[ECM] Update Version";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmUpdateVersion_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmUpdateVersion_FormClosed);
             this.Load += new System.EventHandler(this.frmUpdateVersion_Load);

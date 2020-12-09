@@ -6,38 +6,6 @@ namespace ECMCS.Utilities
 {
     public static class FileHelper
     {
-        public static bool CheckFileLocked(string fileName)
-        {
-            FileStream fileStream = null;
-            try
-            {
-                fileStream = File.Open(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                try
-                {
-                    fileStream = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
-                }
-                catch (Exception)
-                {
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return true;
-            }
-            finally
-            {
-                if (fileStream != null)
-                {
-                    fileStream.Close();
-                }
-            }
-            return false;
-        }
-
         public static void OpenFile(string path)
         {
             using (Process process = new Process())
@@ -51,37 +19,50 @@ namespace ECMCS.Utilities
         public static string CreatePath(string path, string subPath)
         {
             string fullPath = path + subPath;
-            DirectoryInfo directoryInfo = new DirectoryInfo(fullPath);
-            if (!directoryInfo.Exists)
+            if (!Directory.Exists(fullPath))
             {
-                directoryInfo.Create();
+                Directory.CreateDirectory(fullPath);
             }
             return fullPath;
         }
 
         public static void CreatePath(string path, params string[] subPaths)
         {
-            if (subPaths.Length == 0)
-            {
-                throw new ArgumentNullException($"{nameof(subPaths)} can not null");
-            }
             for (int i = 0; i < subPaths.Length; i++)
             {
                 string fullPath = path + subPaths[i];
-                DirectoryInfo directoryInfo = new DirectoryInfo(fullPath);
-                if (!directoryInfo.Exists)
+                if (!Directory.Exists(fullPath))
                 {
-                    directoryInfo.Create();
+                    Directory.CreateDirectory(fullPath);
                 }
             }
         }
 
         public static void CreateFile(string filePath)
         {
-            FileInfo fileInfo = new FileInfo(filePath);
-            if (!fileInfo.Exists)
+            if (!File.Exists(filePath))
             {
-                fileInfo.Create();
+                File.Create(filePath).Dispose();
+            }
+        }
+
+        public static void SetHiddenFolder(string path, bool isHidden)
+        {
+            try
+            {
+                string command = isHidden ? $"attrib +s +h {path}" : $"attrib -s -h {path}";
+                ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
+                procStartInfo.RedirectStandardOutput = true;
+                procStartInfo.UseShellExecute = false;
+                procStartInfo.CreateNoWindow = true;
+                Process proc = new Process();
+                proc.StartInfo = procStartInfo;
+                proc.Start();
+                proc.StandardOutput.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

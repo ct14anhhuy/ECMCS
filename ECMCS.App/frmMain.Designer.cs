@@ -49,12 +49,12 @@ namespace ECMCS.App
             this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.exitECMToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(181, 48);
+            this.contextMenu.Size = new System.Drawing.Size(122, 26);
             // 
             // exitECMToolStripMenuItem
             // 
             this.exitECMToolStripMenuItem.Name = "exitECMToolStripMenuItem";
-            this.exitECMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitECMToolStripMenuItem.Size = new System.Drawing.Size(121, 22);
             this.exitECMToolStripMenuItem.Text = "Exit ECM";
             this.exitECMToolStripMenuItem.Click += new System.EventHandler(this.exitECMToolStripMenuItem_Click);
             // 
