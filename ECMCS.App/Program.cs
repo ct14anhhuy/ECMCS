@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECMCS.App.Extension;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -17,6 +18,7 @@ namespace ECMCS.App
                 MessageBox.Show("Another instance of ECM app is already running.");
                 return;
             }
+            AppUpdateTracking.CheckUpdate();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
@@ -26,11 +28,11 @@ namespace ECMCS.App
         {
             Process curr = Process.GetCurrentProcess();
             Process[] procs = Process.GetProcessesByName(curr.ProcessName);
-            foreach (Process p in procs)
+            foreach (Process proc in procs)
             {
-                if (p.Id != curr.Id && p.MainModule.FileName == curr.MainModule.FileName)
+                if (proc.Id != curr.Id && proc.MainModule.FileName == curr.MainModule.FileName)
                 {
-                    return p;
+                    return proc;
                 }
             }
             return null;

@@ -7,7 +7,7 @@ namespace ECMCS.Utilities
     public static class FileHelper
     {
         public static void OpenFile(string path)
-        {
+        { 
             using (Process process = new Process())
             {
                 process.StartInfo.FileName = "explorer";
