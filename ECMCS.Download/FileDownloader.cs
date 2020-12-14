@@ -10,8 +10,8 @@ namespace ECMCS.Download
 {
     public class FileDownloader
     {
-        private string _path = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor");
-        private string _url;
+        private readonly string _path = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
+        private readonly string _url;
 
         public FileDownloader(string url)
         {

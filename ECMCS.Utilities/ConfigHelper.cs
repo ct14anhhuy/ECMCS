@@ -4,7 +4,7 @@ namespace ECMCS.Utilities
 {
     public static class ConfigHelper
     {
-        public static string ReadSetting(string key)
+        public static string Read(string key)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace ECMCS.Utilities
             }
         }
 
-        public static void UpdateSetting(string key, string value)
+        public static void Write(string key, string value)
         {
             try
             {

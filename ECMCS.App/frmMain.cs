@@ -11,11 +11,10 @@ namespace ECMCS.App
 
     public partial class frmMain : Form
     {
-        private string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
-        private string _monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Root") + ConfigHelper.ReadSetting("SaveFilePath.Monitor");
-        private string _protocolName = ConfigHelper.ReadSetting("Protocol.Name");
-        private string _downloadAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Download.exe";
-        private bool _isHidden = bool.Parse(ConfigHelper.ReadSetting("IsHiddenFolder"));
+        private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
+        private readonly string _monitorPath = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
+        private readonly string _protocolName = ConfigHelper.Read("Protocol.Name");
+        private readonly string _downloadAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Download.exe";
 
         public frmMain()
         {
@@ -28,12 +27,12 @@ namespace ECMCS.App
 
         private void CreateResources()
         {
-            string rootPath = ConfigHelper.ReadSetting("SaveFilePath.Root");
-            string monitorPath = ConfigHelper.ReadSetting("SaveFilePath.Monitor");
-            string viewPath = ConfigHelper.ReadSetting("SaveFilePath.View");
-            string jsonFileName = ConfigHelper.ReadSetting("JsonFileName");
+            string rootPath = ConfigHelper.Read("SaveFilePath.Root");
+            string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
+            string viewPath = ConfigHelper.Read("SaveFilePath.View");
+            string jsonFileName = ConfigHelper.Read("JsonFileName");
             FileHelper.CreatePath(rootPath, monitorPath, viewPath);
-            FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), _isHidden);
+            FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
         }
 

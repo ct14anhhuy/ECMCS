@@ -51,9 +51,9 @@ namespace ECMCS.App
                 _fileInfo.IsUploaded = true;
                 this.Close();
             }
-            catch
+            catch (Exception ex)
             {
-                MessageBox.Show("An error occurred during processing", "Warning");
+                MessageBox.Show($"An error occurred during processing{Environment.NewLine}{ex.Message}", "Warning");
             }
         }
 

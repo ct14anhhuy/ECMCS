@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace ECMCS.App.Extension
 {
-    public static class AppUpdateTracking
+    public static class AppUpdate
     {
         public static void CheckUpdate()
         {
@@ -23,7 +23,7 @@ namespace ECMCS.App.Extension
                         }
                         catch (DeploymentDownloadException ex)
                         {
-                            MessageBox.Show($"Could not update to the latest version of the application, check the connection and try again {Environment.NewLine}{ex.Message}", "Update Failed");
+                            MessageBox.Show($"Could not update to the latest version, check the connection and try again {Environment.NewLine}{ex.Message}", "Update Failed");
                             return;
                         }
                     }

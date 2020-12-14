@@ -4,14 +4,15 @@ namespace ECMCS.Utilities
 {
     public static class VersionExtension
     {
+        private const int MAX_MINOR = 9;
+
         public static Version IncrementMinor(this Version version)
         {
-            int nextMinor = version.Minor + 1;
-            if (nextMinor > 9)
+            if (version.Minor >= MAX_MINOR)
             {
                 return IncrementMajor(version.Major);
             }
-            return new Version(version.Major, nextMinor);
+            return new Version(version.Major, version.Minor + 1);
         }
 
         private static Version IncrementMajor(int major)

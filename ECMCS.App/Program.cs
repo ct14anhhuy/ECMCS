@@ -18,7 +18,7 @@ namespace ECMCS.App
                 MessageBox.Show("Another instance of ECM app is already running.");
                 return;
             }
-            AppUpdateTracking.CheckUpdate();
+            AppUpdate.CheckUpdate();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());
