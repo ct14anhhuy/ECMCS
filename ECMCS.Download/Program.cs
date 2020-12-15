@@ -23,6 +23,7 @@ namespace ECMCS.Download
             }
             FileDownloader downloader = new FileDownloader(args[0]);
             downloader.Download();
+            Console.ReadLine();
         }
     }
 }

@@ -65,5 +65,27 @@ namespace ECMCS.Utilities
                 throw ex;
             }
         }
+
+        public static void Empty(params string[] paths)
+        {
+            for (int i = 0; i < paths.Length; i++)
+            {
+                DirectoryInfo directory = new DirectoryInfo(paths[i]);
+                foreach (FileInfo file in directory.EnumerateFiles())
+                {
+                    if (file.CreationTime < DateTime.Today)
+                    {
+                        file.Delete();
+                    }
+                }
+                foreach (DirectoryInfo dir in directory.EnumerateDirectories())
+                {
+                    if (dir.CreationTime < DateTime.Today)
+                    {
+                        dir.Delete(true);
+                    }
+                }
+            }
+        }
     }
 }
