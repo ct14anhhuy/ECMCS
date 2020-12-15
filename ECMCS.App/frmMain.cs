@@ -31,6 +31,8 @@ namespace ECMCS.App
             string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
             string viewPath = ConfigHelper.Read("SaveFilePath.View");
             string jsonFileName = ConfigHelper.Read("JsonFileName");
+
+            FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
             FileHelper.CreatePath(rootPath, monitorPath, viewPath);
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
