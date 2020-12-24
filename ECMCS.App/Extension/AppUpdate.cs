@@ -20,6 +20,7 @@ namespace ECMCS.App.Extension
                         {
                             app.Update();
                             Application.Restart();
+                            Environment.Exit(0);
                         }
                         catch (DeploymentDownloadException ex)
                         {

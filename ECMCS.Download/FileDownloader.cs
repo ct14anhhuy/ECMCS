@@ -22,11 +22,13 @@ namespace ECMCS.Download
         {
             string subPath = $@"ECM{DateTime.Now:ddMMyyyyHHmmssfff}\";
             var fileInfo = ExtractFromString(_url, "[", "]");
-            WebClient client = new WebClient();
-            fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
-            client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
-            FileHelper.OpenFile(fileInfo.FilePath);
-            JsonHelper.Add(fileInfo);
+            using (WebClient client = new WebClient())
+            {
+                fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
+                client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
+                FileHelper.OpenFile(fileInfo.FilePath);
+                JsonHelper.Add(fileInfo);
+            }
         }
 
         private FileInfoDTO ExtractFromString(string source, string start, string end)

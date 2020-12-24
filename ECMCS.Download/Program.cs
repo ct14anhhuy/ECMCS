@@ -19,11 +19,10 @@ namespace ECMCS.Download
             ShowWindow(GetConsoleWindow(), SW_HIDE);
             if (Process.GetProcessesByName("ECMCS.App").Length == 0)
             {
-                Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe");
+                Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
             }
             FileDownloader downloader = new FileDownloader(args[0]);
             downloader.Download();
-            Console.ReadLine();
         }
     }
 }

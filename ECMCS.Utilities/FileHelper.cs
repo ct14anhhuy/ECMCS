@@ -55,10 +55,12 @@ namespace ECMCS.Utilities
                 procStartInfo.RedirectStandardOutput = true;
                 procStartInfo.UseShellExecute = false;
                 procStartInfo.CreateNoWindow = true;
-                Process proc = new Process();
-                proc.StartInfo = procStartInfo;
-                proc.Start();
-                proc.StandardOutput.ReadToEnd();
+                using (Process proc = new Process())
+                {
+                    proc.StartInfo = procStartInfo;
+                    proc.Start();
+                    proc.StandardOutput.ReadToEnd();
+                }
             }
             catch (Exception ex)
             {

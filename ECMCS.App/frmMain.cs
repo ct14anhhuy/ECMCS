@@ -32,9 +32,9 @@ namespace ECMCS.App
             string viewPath = ConfigHelper.Read("SaveFilePath.View");
             string jsonFileName = ConfigHelper.Read("JsonFileName");
 
-            FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
             FileHelper.CreatePath(rootPath, monitorPath, viewPath);
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
+            FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
         }
 
@@ -43,17 +43,20 @@ namespace ECMCS.App
             notifyIcon.BalloonTipIcon = icon;
             notifyIcon.BalloonTipTitle = title;
             notifyIcon.BalloonTipText = messenge;
-            notifyIcon.ShowBalloonTip(3000);
+            notifyIcon.ShowBalloonTip(1000);
         }
 
         private void Watch(string path)
         {
-            var watcher = new FileSystemWatcher();
-            watcher.Path = path;
-            watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-            watcher.Filter = "*.*";
-            watcher.EnableRaisingEvents = true;
-            watcher.IncludeSubdirectories = true;
+            var watcher = new FileSystemWatcher
+            {
+                Path = path,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                Filter = "*.*",
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                SynchronizingObject = this
+            };
             watcher.Deleted += Watcher_Deleted;
         }
 
@@ -79,7 +82,13 @@ namespace ECMCS.App
             var delSendMsg = new SendMessenge<FileInfoDTO>(frm.EventListener);
             delSendMsg(fileInfo);
             frm.OnUploadClosed += Frm_OnUploadClosed;
-            frm.ShowDialog();
+            frm.FormClosed += Frm_FormClosed;
+            frm.Show();
+        }
+
+        private void Frm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            MemoryManagement.FlushMemory();
         }
 
         private void Frm_OnUploadClosed(object sender, FileInfoDTO e)

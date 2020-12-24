@@ -49,6 +49,7 @@ namespace ECMCS.App
             {
                 UploadFile();
                 _fileInfo.IsUploaded = true;
+                JsonHelper.Update(_fileInfo, x => x.FilePath == _fileInfo.FilePath);
                 this.Close();
             }
             catch (Exception ex)
@@ -68,7 +69,7 @@ namespace ECMCS.App
 
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var url = "http://172.25.216.127:8081/api/file/upload";
+            var url = $"http://172.25.216.127:8081/api/file/upload";
             var client = new HttpClient();
             var response = client.PostAsync(url, data).Result;
             _ = response.Content.ReadAsStringAsync().Result;
@@ -91,25 +92,25 @@ namespace ECMCS.App
             UploadClosed(_fileInfo);
         }
 
-        private event EventHandler<FileInfoDTO> _onUploadClosed;
+        private event EventHandler<FileInfoDTO> onUploadClosed;
 
         public event EventHandler<FileInfoDTO> OnUploadClosed
         {
             add
             {
-                _onUploadClosed += value;
+                onUploadClosed += value;
             }
             remove
             {
-                _onUploadClosed -= value;
+                onUploadClosed -= value;
             }
         }
 
         private void UploadClosed(FileInfoDTO fileInfo)
         {
-            if (_onUploadClosed != null)
+            if (onUploadClosed != null)
             {
-                _onUploadClosed(this, fileInfo);
+                onUploadClosed(this, fileInfo);
             }
         }
     }
