@@ -14,12 +14,12 @@ namespace ECMCS.App
         private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
         private readonly string _monitorPath = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
         private readonly string _protocolName = ConfigHelper.Read("Protocol.Name");
-        private readonly string _downloadAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Download.exe";
+        private readonly string _routeAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Route.exe";
 
         public frmMain()
         {
             InitializeComponent();
-            URLProtocolHelper.Create(_protocolName, _downloadAppPath);
+            ProtocolHelper.Create(_protocolName, _routeAppPath);
             CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
             Watch(_monitorPath);
@@ -66,7 +66,7 @@ namespace ECMCS.App
             if (_extensions.Any(ext.Equals))
             {
                 string subPath = Path.GetDirectoryName(e.FullPath);
-                var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).SingleOrDefault();
+                var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
                 if (fileInfo != null)
                 {
                     fileInfo.IsDone = true;

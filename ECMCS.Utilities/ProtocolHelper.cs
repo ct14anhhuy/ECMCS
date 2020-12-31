@@ -3,7 +3,7 @@ using System;
 
 namespace ECMCS.Utilities
 {
-    public static class URLProtocolHelper
+    public static class ProtocolHelper
     {
         public static void Create(string protocolName, string appPath)
         {

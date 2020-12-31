@@ -8,7 +8,7 @@ namespace ECMCS.Utilities
 {
     public static class JsonHelper
     {
-        private static readonly string _jsonFile = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor") + ConfigHelper.Read("JsonFileName");
+        private static readonly string _jsonFile = $"{ConfigHelper.Read("SaveFilePath.Root")}{ConfigHelper.Read("SaveFilePath.Monitor")}{ConfigHelper.Read("JsonFileName")}";
 
         public static List<TEntity> Get<TEntity>(Func<TEntity, bool> condition = null)
         {

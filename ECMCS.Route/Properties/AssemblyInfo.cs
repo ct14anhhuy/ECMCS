@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ECMCS.Download")]
+[assembly: AssemblyTitle("ECMCS.Route")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ECMCS.Download")]
+[assembly: AssemblyProduct("ECMCS.Route")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d91e5da5-052b-4817-8fd0-aef32259e743")]
+[assembly: Guid("0bfb5cef-4733-45d3-932c-13b9fc9b2f6b")]
 
 // Version information for an assembly consists of the following four values:
 //

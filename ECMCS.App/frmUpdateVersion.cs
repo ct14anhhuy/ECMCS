@@ -13,6 +13,7 @@ namespace ECMCS.App
     public partial class frmUpdateVersion : MetroForm
     {
         private FileInfoDTO _fileInfo;
+        private const string UPLOAD_URL = "http://172.25.216.127:8081/api/file/upload";
 
         public frmUpdateVersion()
         {
@@ -69,9 +70,8 @@ namespace ECMCS.App
 
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var url = $"http://172.25.216.127:8081/api/file/upload";
             var client = new HttpClient();
-            var response = client.PostAsync(url, data).Result;
+            var response = client.PostAsync(UPLOAD_URL, data).Result;
             _ = response.Content.ReadAsStringAsync().Result;
         }
 

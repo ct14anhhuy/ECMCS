@@ -1,4 +1,6 @@
-﻿namespace ECMCS.DTO
+﻿using System;
+
+namespace ECMCS.DTO
 {
     public class FileInfoDTO
     {
@@ -8,6 +10,7 @@
         public string FileName { get; set; }
         public string Owner { get; set; }
         public string Version { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Today;
         public bool IsDone { get; set; } = false;
         public bool IsUploaded { get; set; } = false;
     }

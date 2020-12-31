@@ -51,12 +51,14 @@ namespace ECMCS.Utilities
             try
             {
                 string command = isHidden ? $"attrib +s +h {path}" : $"attrib -s -h {path}";
-                ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command);
-                procStartInfo.RedirectStandardOutput = true;
-                procStartInfo.UseShellExecute = false;
-                procStartInfo.CreateNoWindow = true;
                 using (Process proc = new Process())
                 {
+                    ProcessStartInfo procStartInfo = new ProcessStartInfo("cmd", "/c " + command)
+                    {
+                        RedirectStandardOutput = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
                     proc.StartInfo = procStartInfo;
                     proc.Start();
                     proc.StandardOutput.ReadToEnd();
@@ -75,14 +77,14 @@ namespace ECMCS.Utilities
                 DirectoryInfo directory = new DirectoryInfo(paths[i]);
                 foreach (FileInfo file in directory.EnumerateFiles())
                 {
-                    if (file.CreationTime < DateTime.Today)
+                    if (file.LastWriteTime < DateTime.Today)
                     {
                         file.Delete();
                     }
                 }
                 foreach (DirectoryInfo dir in directory.EnumerateDirectories())
                 {
-                    if (dir.CreationTime < DateTime.Today)
+                    if (dir.LastWriteTime < DateTime.Today)
                     {
                         dir.Delete(true);
                     }
