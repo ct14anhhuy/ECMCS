@@ -33,11 +33,12 @@ namespace ECMCS.Route
         {
             FileInfoDTO fileInfo = new FileInfoDTO();
             string[] extractedStr = source.Extract(start, end);
-            fileInfo.Id = extractedStr[0];
+            fileInfo.Id = int.Parse(extractedStr[0]);
             fileInfo.Url = extractedStr[1];
             fileInfo.FileName = Path.GetFileName(fileInfo.Url);
             fileInfo.Owner = extractedStr[2];
             fileInfo.Version = extractedStr[3];
+            fileInfo.ReadOnly = bool.Parse(extractedStr[4]);
             return fileInfo;
         }
     }

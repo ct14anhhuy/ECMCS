@@ -1,11 +1,14 @@
-﻿namespace ECMCS.DTO
+﻿using System;
+
+namespace ECMCS.DTO
 {
     public class FileUploadDTO
     {
-        public string Id { get; set; }
-        public string Owner { get; set; }
+        public int Id { get; set; }
         public string FileName { get; set; }
+        public string Modifier { get; set; }
         public string Version { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public byte[] FileData { get; set; }
     }
 }

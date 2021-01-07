@@ -59,11 +59,11 @@ namespace ECMCS.Route
             string baseUrl = ConfigHelper.Read("BaseUrl");
             try
             {
-                Process.Start("chrome", baseUrl);
+                Process.Start("chrome", baseUrl).Dispose();
             }
             catch
             {
-                Process.Start("microsoft-edge:http://172.25.216.127:8081/");
+                Process.Start($"microsoft-edge:{baseUrl}").Dispose();
             }
         }
     }

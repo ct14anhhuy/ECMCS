@@ -67,7 +67,7 @@ namespace ECMCS.App
             {
                 string subPath = Path.GetDirectoryName(e.FullPath);
                 var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                if (fileInfo != null)
+                if (fileInfo != null && !fileInfo.ReadOnly)
                 {
                     fileInfo.IsDone = true;
                     JsonHelper.Update(fileInfo, x => x.FilePath == fileInfo.FilePath);
