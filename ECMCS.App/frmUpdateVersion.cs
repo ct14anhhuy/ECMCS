@@ -13,7 +13,7 @@ namespace ECMCS.App
     public partial class frmUpdateVersion : MetroForm
     {
         private FileInfoDTO _fileInfo;
-        private string uploadUrl = $"{ConfigHelper.Read("BaseUrl")}/filehistory/IncreaseVersion";
+        private string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/filehistory/UploadFile";
 
         public frmUpdateVersion()
         {
@@ -62,11 +62,12 @@ namespace ECMCS.App
         private void UploadFile()
         {
             var fileUpload = new FileUploadDTO();
-            fileUpload.Id = _fileInfo.Id;
+            fileUpload.FileId = _fileInfo.Id;
             fileUpload.FileName = _fileInfo.FileName;
-            fileUpload.Modifier = "anhhuy.le";
+            fileUpload.Modifier = 1;
             fileUpload.Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version;
             fileUpload.FileData = File.ReadAllBytes(_fileInfo.FilePath);
+            fileUpload.Size = fileUpload.FileData.Length / 1024;
 
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");

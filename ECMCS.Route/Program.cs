@@ -24,7 +24,7 @@ namespace ECMCS.Route
         private static void RouteToAction(string args)
         {
             args = UrlHelper.Decode(args);
-            string action = args.Extract("{", "}")[0];
+            string action = args.Extract("<", ">")[0];
             switch (action)
             {
                 case "Download":
@@ -56,7 +56,7 @@ namespace ECMCS.Route
             {
                 Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
             }
-            string baseUrl = ConfigHelper.Read("BaseUrl");
+            string baseUrl = ConfigHelper.Read("WebUrl");
             try
             {
                 Process.Start("chrome", baseUrl).Dispose();
