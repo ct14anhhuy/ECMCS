@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace ECMCS.Utilities
+namespace ECMCS.Utilities.FileFolderExtensions
 {
     public static class FileHelper
     {
@@ -28,12 +28,22 @@ namespace ECMCS.Utilities
 
         public static void CreatePath(string path, params string[] subPaths)
         {
-            for (int i = 0; i < subPaths.Length; i++)
+            if (subPaths is null)
             {
-                string fullPath = path + subPaths[i];
-                if (!Directory.Exists(fullPath))
+                if (!Directory.Exists(path))
                 {
-                    Directory.CreateDirectory(fullPath);
+                    Directory.CreateDirectory(path);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < subPaths.Length; i++)
+                {
+                    string fullPath = path + subPaths[i];
+                    if (!Directory.Exists(fullPath))
+                    {
+                        Directory.CreateDirectory(fullPath);
+                    }
                 }
             }
         }

@@ -105,6 +105,9 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -118,6 +121,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extension\AppUpdate.cs" />
+    <Compile Include="frmSyncToECM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSyncToECM.Designer.cs">
+      <DependentUpon>frmSyncToECM.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmUpdateVersion.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +148,9 @@
     </Compile>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSyncToECM.resx">
+      <DependentUpon>frmSyncToECM.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmUpdateVersion.resx">
       <DependentUpon>frmUpdateVersion.cs</DependentUpon>
@@ -199,7 +211,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\icon-ecm-colored.ico" />
+    <None Include="Resources\icon-ecm-colored.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

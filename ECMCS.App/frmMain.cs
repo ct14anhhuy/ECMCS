@@ -1,5 +1,6 @@
 ﻿using ECMCS.DTO;
 using ECMCS.Utilities;
+using ECMCS.Utilities.FileFolderExtensions;
 using System;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace ECMCS.App
     {
         private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
         private readonly string _monitorPath = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
+        private readonly string _syncPath = ConfigHelper.Read("SyncFilePath");
         private readonly string _protocolName = ConfigHelper.Read("Protocol.Name");
         private readonly string _routeAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Route.exe";
 
@@ -22,7 +24,9 @@ namespace ECMCS.App
             ProtocolHelper.Create(_protocolName, _routeAppPath);
             CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
-            Watch(_monitorPath);
+
+            MonitorWatcher(_monitorPath);
+            SyncWatcher(_syncPath);
         }
 
         private void CreateResources()
@@ -36,6 +40,16 @@ namespace ECMCS.App
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
             FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
+
+            FileHelper.CreatePath(_syncPath);
+            CreateFolderIcon(_syncPath);
+        }
+
+        private void CreateFolderIcon(string folderPath)
+        {
+            string iconPath = Directory.GetCurrentDirectory() + @"\Resources\icon-ecm-colored.ico";
+            FolderIcon folderIcon = new FolderIcon(folderPath);
+            folderIcon.CreateFolderIcon(iconPath, "Sync To ECM");
         }
 
         private void ShowBalloonTip(string title, string messenge, ToolTipIcon icon)
@@ -44,36 +58,6 @@ namespace ECMCS.App
             notifyIcon.BalloonTipTitle = title;
             notifyIcon.BalloonTipText = messenge;
             notifyIcon.ShowBalloonTip(1000);
-        }
-
-        private void Watch(string path)
-        {
-            var watcher = new FileSystemWatcher
-            {
-                Path = path,
-                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
-                Filter = "*.*",
-                EnableRaisingEvents = true,
-                IncludeSubdirectories = true,
-                SynchronizingObject = this
-            };
-            watcher.Deleted += Watcher_Deleted;
-        }
-
-        private void Watcher_Deleted(object sender, FileSystemEventArgs e)
-        {
-            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (_extensions.Any(ext.Equals))
-            {
-                string subPath = Path.GetDirectoryName(e.FullPath);
-                var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                if (fileInfo != null && !fileInfo.ReadOnly)
-                {
-                    fileInfo.IsDone = true;
-                    JsonHelper.Update(fileInfo, x => x.FilePath == fileInfo.FilePath);
-                    OpenUpdateFrm(fileInfo);
-                }
-            }
         }
 
         private void OpenUpdateFrm(FileInfoDTO fileInfo)
@@ -117,5 +101,69 @@ namespace ECMCS.App
         {
             Application.ExitThread();
         }
+
+        #region Monitor watcher
+
+        private void MonitorWatcher(string path)
+        {
+            var monitorWatcher = new FileSystemWatcher
+            {
+                Path = path,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                Filter = "*.*",
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                SynchronizingObject = this
+            };
+            monitorWatcher.Deleted += MonitorWatcher_Deleted; ;
+        }
+
+        private void MonitorWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            if (_extensions.Any(ext.Equals))
+            {
+                string subPath = Path.GetDirectoryName(e.FullPath);
+                var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
+                if (fileInfo != null && !fileInfo.ReadOnly)
+                {
+                    fileInfo.IsDone = true;
+                    JsonHelper.Update(fileInfo, x => x.FilePath == fileInfo.FilePath);
+                    OpenUpdateFrm(fileInfo);
+                }
+            }
+        }
+
+        #endregion Monitor watcher
+
+        #region Sync watcher
+
+        private void SyncWatcher(string path)
+        {
+            var syncWatcher = new FileSystemWatcher
+            {
+                Path = path,
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+                Filter = "*.*",
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                SynchronizingObject = this
+            };
+            syncWatcher.Created += SyncWatcher_Created;
+        }
+
+        private void SyncWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            if (_extensions.Any(ext.Equals))
+            {
+                frmSyncToECM frm = new frmSyncToECM();
+                var delSendMsg = new SendMessenge<(string, string)>(frm.EventListener);
+                delSendMsg((e.FullPath, ""));
+                frm.Show();
+            }
+        }
+
+        #endregion Sync watcher
     }
 }

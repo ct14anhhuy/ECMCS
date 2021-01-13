@@ -1,5 +1,6 @@
 ﻿using ECMCS.DTO;
 using ECMCS.Utilities;
+using ECMCS.Utilities.FileFolderExtensions;
 using System;
 using System.IO;
 using System.Net;

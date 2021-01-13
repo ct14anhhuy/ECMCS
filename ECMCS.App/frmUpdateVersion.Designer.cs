@@ -66,7 +66,7 @@ namespace ECMCS.App
             // 
             // 
             this.txtCurrentVersion.CustomButton.Image = null;
-            this.txtCurrentVersion.CustomButton.Location = new System.Drawing.Point(274, 1);
+            this.txtCurrentVersion.CustomButton.Location = new System.Drawing.Point(278, 1);
             this.txtCurrentVersion.CustomButton.Name = "";
             this.txtCurrentVersion.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.txtCurrentVersion.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -84,7 +84,7 @@ namespace ECMCS.App
             this.txtCurrentVersion.SelectionLength = 0;
             this.txtCurrentVersion.SelectionStart = 0;
             this.txtCurrentVersion.ShortcutsEnabled = true;
-            this.txtCurrentVersion.Size = new System.Drawing.Size(296, 23);
+            this.txtCurrentVersion.Size = new System.Drawing.Size(300, 23);
             this.txtCurrentVersion.TabIndex = 2;
             this.txtCurrentVersion.UseSelectable = true;
             this.txtCurrentVersion.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -96,7 +96,7 @@ namespace ECMCS.App
             // 
             // 
             this.txtNextVersion.CustomButton.Image = null;
-            this.txtNextVersion.CustomButton.Location = new System.Drawing.Point(274, 1);
+            this.txtNextVersion.CustomButton.Location = new System.Drawing.Point(278, 1);
             this.txtNextVersion.CustomButton.Name = "";
             this.txtNextVersion.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.txtNextVersion.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -114,7 +114,7 @@ namespace ECMCS.App
             this.txtNextVersion.SelectionLength = 0;
             this.txtNextVersion.SelectionStart = 0;
             this.txtNextVersion.ShortcutsEnabled = true;
-            this.txtNextVersion.Size = new System.Drawing.Size(296, 23);
+            this.txtNextVersion.Size = new System.Drawing.Size(300, 23);
             this.txtNextVersion.TabIndex = 3;
             this.txtNextVersion.UseSelectable = true;
             this.txtNextVersion.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -167,7 +167,7 @@ namespace ECMCS.App
             // 
             // 
             this.txtFileName.CustomButton.Image = null;
-            this.txtFileName.CustomButton.Location = new System.Drawing.Point(274, 1);
+            this.txtFileName.CustomButton.Location = new System.Drawing.Point(278, 1);
             this.txtFileName.CustomButton.Name = "";
             this.txtFileName.CustomButton.Size = new System.Drawing.Size(21, 21);
             this.txtFileName.CustomButton.Style = MetroFramework.MetroColorStyle.Blue;
@@ -185,7 +185,7 @@ namespace ECMCS.App
             this.txtFileName.SelectionLength = 0;
             this.txtFileName.SelectionStart = 0;
             this.txtFileName.ShortcutsEnabled = true;
-            this.txtFileName.Size = new System.Drawing.Size(296, 23);
+            this.txtFileName.Size = new System.Drawing.Size(300, 23);
             this.txtFileName.TabIndex = 8;
             this.txtFileName.UseSelectable = true;
             this.txtFileName.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
@@ -206,7 +206,7 @@ namespace ECMCS.App
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(448, 328);
+            this.ClientSize = new System.Drawing.Size(450, 325);
             this.Controls.Add(this.metroLabel3);
             this.Controls.Add(this.txtFileName);
             this.Controls.Add(this.btnClose);

@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
 
-namespace ECMCS.Utilities
+namespace ECMCS.Utilities.FileFolderExtensions
 {
     public static class ConfigHelper
     {
