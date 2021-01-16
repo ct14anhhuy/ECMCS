@@ -13,8 +13,7 @@ namespace ECMCS.App
 {
     public partial class frmUpdateVersion : MetroForm
     {
-        private FileInfoDTO _fileInfo;
-        private string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/filehistory/UploadFile";
+        private FileDownloadDTO _fileInfo;
 
         public frmUpdateVersion()
         {
@@ -40,7 +39,7 @@ namespace ECMCS.App
             this.Close();
         }
 
-        public void EventListener(FileInfoDTO fileInfo)
+        public void EventListener(FileDownloadDTO fileInfo)
         {
             _fileInfo = fileInfo;
         }
@@ -62,10 +61,11 @@ namespace ECMCS.App
 
         private void UploadFile()
         {
+            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/filehistory/uploadfile";
             var fileUpload = new FileUploadDTO();
             fileUpload.FileId = _fileInfo.Id;
             fileUpload.FileName = _fileInfo.FileName;
-            fileUpload.Modifier = 1;
+            fileUpload.ModifierUser = CommonConstants.EP_LITE_USER;
             fileUpload.Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version;
             fileUpload.FileData = File.ReadAllBytes(_fileInfo.FilePath);
             fileUpload.Size = fileUpload.FileData.Length / 1024;
@@ -94,9 +94,9 @@ namespace ECMCS.App
             UploadClosed(_fileInfo);
         }
 
-        private event EventHandler<FileInfoDTO> onUploadClosed;
+        private event EventHandler<FileDownloadDTO> onUploadClosed;
 
-        public event EventHandler<FileInfoDTO> OnUploadClosed
+        public event EventHandler<FileDownloadDTO> OnUploadClosed
         {
             add
             {
@@ -108,7 +108,7 @@ namespace ECMCS.App
             }
         }
 
-        private void UploadClosed(FileInfoDTO fileInfo)
+        private void UploadClosed(FileDownloadDTO fileInfo)
         {
             if (onUploadClosed != null)
             {

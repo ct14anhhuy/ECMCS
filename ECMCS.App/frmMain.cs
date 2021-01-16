@@ -60,30 +60,24 @@ namespace ECMCS.App
             notifyIcon.ShowBalloonTip(1000);
         }
 
-        private void OpenUpdateFrm(FileInfoDTO fileInfo)
+        private void OpenUpdateFrm(FileDownloadDTO fileInfo)
         {
             var frm = new frmUpdateVersion();
-            var delSendMsg = new SendMessenge<FileInfoDTO>(frm.EventListener);
+            var delSendMsg = new SendMessenge<FileDownloadDTO>(frm.EventListener);
             delSendMsg(fileInfo);
             frm.OnUploadClosed += Frm_OnUploadClosed;
-            frm.FormClosed += Frm_FormClosed;
             frm.Show();
         }
 
-        private void Frm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            MemoryManagement.FlushMemory();
-        }
-
-        private void Frm_OnUploadClosed(object sender, FileInfoDTO e)
+        private void Frm_OnUploadClosed(object sender, FileDownloadDTO e)
         {
             if (e.IsUploaded)
             {
-                ShowBalloonTip("Info", $"File {e.FileName} successfully uploaded", ToolTipIcon.Info);
+                ShowBalloonTip("Info", $"Upload file successfully", ToolTipIcon.Info);
             }
             else
             {
-                ShowBalloonTip("Info", $"File {e.FileName} has not uploaded", ToolTipIcon.Warning);
+                ShowBalloonTip("Info", $"File upload failed", ToolTipIcon.Warning);
             }
         }
 
@@ -124,7 +118,7 @@ namespace ECMCS.App
             if (_extensions.Any(ext.Equals))
             {
                 string subPath = Path.GetDirectoryName(e.FullPath);
-                var fileInfo = JsonHelper.Get<FileInfoDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
+                var fileInfo = JsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
                 if (fileInfo != null && !fileInfo.ReadOnly)
                 {
                     fileInfo.IsDone = true;
@@ -158,9 +152,22 @@ namespace ECMCS.App
             if (_extensions.Any(ext.Equals))
             {
                 frmSyncToECM frm = new frmSyncToECM();
+                frm.OnUploadClosed += Frm_OnUploadClosed1;
                 var delSendMsg = new SendMessenge<(string, string)>(frm.EventListener);
-                delSendMsg((e.FullPath, ""));
+                delSendMsg((e.FullPath, CommonConstants.EP_LITE_USER));
                 frm.Show();
+            }
+        }
+
+        private void Frm_OnUploadClosed1(object sender, bool e)
+        {
+            if (e)
+            {
+                ShowBalloonTip("Info", $"Upload file successfully", ToolTipIcon.Info);
+            }
+            else
+            {
+                ShowBalloonTip("Info", $"File upload failed", ToolTipIcon.Warning);
             }
         }
 

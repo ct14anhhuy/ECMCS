@@ -24,15 +24,16 @@ namespace ECMCS.Route
             using (WebClient client = new WebClient())
             {
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
+                Console.WriteLine(fileInfo.Url);
+                Console.WriteLine(fileInfo.FilePath);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
                 JsonHelper.Add(fileInfo);
             }
         }
-
-        private FileInfoDTO ExtractParamsFromUrl(string source, string start, string end)
+        private FileDownloadDTO ExtractParamsFromUrl(string source, string start, string end)
         {
-            FileInfoDTO fileInfo = new FileInfoDTO();
+            FileDownloadDTO fileInfo = new FileDownloadDTO();
             string[] extractedStr = source.Extract(start, end);
             fileInfo.Id = int.Parse(extractedStr[0]);
             fileInfo.Url = extractedStr[1];

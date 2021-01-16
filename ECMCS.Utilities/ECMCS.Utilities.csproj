@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonConstants.cs" />
     <Compile Include="FileFolderExtensions\ConfigHelper.cs" />
     <Compile Include="FileFolderExtensions\FileHelper.cs" />
     <Compile Include="FileFolderExtensions\FolderIcon.cs" />

@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectoryDTO.cs" />
+    <Compile Include="FileDownloadDTO.cs" />
     <Compile Include="FileInfoDTO.cs" />
     <Compile Include="FileUploadDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
