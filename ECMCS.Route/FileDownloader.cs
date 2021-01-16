@@ -31,6 +31,7 @@ namespace ECMCS.Route
                 JsonHelper.Add(fileInfo);
             }
         }
+
         private FileDownloadDTO ExtractParamsFromUrl(string source, string start, string end)
         {
             FileDownloadDTO fileInfo = new FileDownloadDTO();

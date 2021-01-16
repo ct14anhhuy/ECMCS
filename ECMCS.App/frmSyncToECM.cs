@@ -93,27 +93,31 @@ namespace ECMCS.App
                 }
                 orphan.Tag = item.Id;
             }
-            foreach (TreeNode node in treeECMFolder.Nodes)
-            {
-                SetIconForNode(node);
-            }
+            SetIconForNode();
         }
 
-        private void SetIconForNode(TreeNode node)
+        private void SetIconForNode()
         {
             int imgIndex = 0;
             ImageList list = new ImageList();
             Image img = Image.FromFile(Directory.GetCurrentDirectory() + @"\Resources\folder.ico");
             list.Images.Add(img);
             treeECMFolder.ImageList = list;
+            foreach (TreeNode node in treeECMFolder.Nodes)
+            {
+                SetIcon(node, imgIndex);
+            }
+        }
 
+        private void SetIcon(TreeNode node, int imgIndex)
+        {
             node.ImageIndex = imgIndex;
             node.SelectedImageIndex = imgIndex;
             if (node.Nodes.Count != 0)
             {
                 foreach (TreeNode tn in node.Nodes)
                 {
-                    SetIconForNode(tn);
+                    SetIcon(tn, imgIndex);
                 }
             }
         }
