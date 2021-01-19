@@ -16,9 +16,9 @@ namespace ECMCS.Utilities
                 return null;
             }
             var bytesToBeEncrypted = Encoding.UTF8.GetBytes(plainText);
-            var passwordBytes = Encoding.UTF8.GetBytes(SECRET_KEY);
-            passwordBytes = SHA256.Create().ComputeHash(passwordBytes);
-            var bytesEncrypted = Encrypt(bytesToBeEncrypted, passwordBytes);
+            var secretBytes = Encoding.UTF8.GetBytes(SECRET_KEY);
+            secretBytes = SHA256.Create().ComputeHash(secretBytes);
+            var bytesEncrypted = Encrypt(bytesToBeEncrypted, secretBytes);
             return Convert.ToBase64String(bytesEncrypted);
         }
 
@@ -29,13 +29,13 @@ namespace ECMCS.Utilities
                 return null;
             }
             var bytesToBeDecrypted = Convert.FromBase64String(encryptedText);
-            var passwordBytes = Encoding.UTF8.GetBytes(SECRET_KEY);
-            passwordBytes = SHA256.Create().ComputeHash(passwordBytes);
-            var bytesDecrypted = Decrypt(bytesToBeDecrypted, passwordBytes);
+            var secretBytes = Encoding.UTF8.GetBytes(SECRET_KEY);
+            secretBytes = SHA256.Create().ComputeHash(secretBytes);
+            var bytesDecrypted = Decrypt(bytesToBeDecrypted, secretBytes);
             return Encoding.UTF8.GetString(bytesDecrypted);
         }
 
-        private static byte[] Encrypt(byte[] bytesToBeEncrypted, byte[] passwordBytes)
+        private static byte[] Encrypt(byte[] bytesToBeEncrypted, byte[] secretBytes)
         {
             byte[] encryptedBytes = null;
             var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -43,7 +43,7 @@ namespace ECMCS.Utilities
             {
                 using (RijndaelManaged AES = new RijndaelManaged())
                 {
-                    var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                    var key = new Rfc2898DeriveBytes(secretBytes, saltBytes, 1000);
                     AES.KeySize = 256;
                     AES.BlockSize = 128;
                     AES.Key = key.GetBytes(AES.KeySize / 8);
@@ -60,7 +60,7 @@ namespace ECMCS.Utilities
             return encryptedBytes;
         }
 
-        private static byte[] Decrypt(byte[] bytesToBeDecrypted, byte[] passwordBytes)
+        private static byte[] Decrypt(byte[] bytesToBeDecrypted, byte[] secretBytes)
         {
             byte[] decryptedBytes = null;
             var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -68,7 +68,7 @@ namespace ECMCS.Utilities
             {
                 using (RijndaelManaged AES = new RijndaelManaged())
                 {
-                    var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
+                    var key = new Rfc2898DeriveBytes(secretBytes, saltBytes, 1000);
                     AES.KeySize = 256;
                     AES.BlockSize = 128;
                     AES.Key = key.GetBytes(AES.KeySize / 8);
