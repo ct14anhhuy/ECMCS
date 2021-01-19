@@ -19,7 +19,9 @@ namespace ECMCS.Route
         private static void Main(string[] args)
         {
             ShowWindow(GetConsoleWindow(), SW_HIDE);
-            RouteToAction(args[0]);
+            string urlParams = UrlHelper.Decode(args[0].Substring(args[0].LastIndexOf(':') + 1)).Trim().Replace(" ", "+");
+            string decrypted = Encryptor.Decrypt(urlParams);
+            RouteToAction(decrypted);
         }
 
         private static void RouteToAction(string args)

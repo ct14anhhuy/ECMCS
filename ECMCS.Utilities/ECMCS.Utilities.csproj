@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonConstants.cs" />
+    <Compile Include="Encryptor.cs" />
     <Compile Include="FileFolderExtensions\ConfigHelper.cs" />
     <Compile Include="FileFolderExtensions\FileHelper.cs" />
     <Compile Include="FileFolderExtensions\FolderIcon.cs" />
