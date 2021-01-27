@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extension\AppUpdate.cs" />
+    <Compile Include="Extension\EcmHttpClient.cs" />
     <Compile Include="frmSyncToECM.cs">
       <SubType>Form</SubType>
     </Compile>

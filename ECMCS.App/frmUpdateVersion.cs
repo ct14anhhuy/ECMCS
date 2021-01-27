@@ -1,4 +1,5 @@
-﻿using ECMCS.DTO;
+﻿using ECMCS.App.Extension;
+using ECMCS.DTO;
 using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using MetroFramework.Forms;
@@ -72,7 +73,7 @@ namespace ECMCS.App
 
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var client = new HttpClient();
+            var client = new EcmHttpClient(_fileInfo.Owner);
             var response = client.PostAsync(uploadUrl, data).Result;
             _ = response.Content.ReadAsStringAsync().Result;
         }

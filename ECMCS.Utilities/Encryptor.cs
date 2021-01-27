@@ -35,7 +35,7 @@ namespace ECMCS.Utilities
             return Encoding.UTF8.GetString(bytesDecrypted);
         }
 
-        private static byte[] Encrypt(byte[] bytesToBeEncrypted, byte[] secretBytes)
+        private static byte[] Encrypt(byte[] bytesToEncrypted, byte[] secretBytes)
         {
             byte[] encryptedBytes = null;
             var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -51,7 +51,7 @@ namespace ECMCS.Utilities
                     AES.Mode = CipherMode.CBC;
                     using (var cs = new CryptoStream(ms, AES.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        cs.Write(bytesToBeEncrypted, 0, bytesToBeEncrypted.Length);
+                        cs.Write(bytesToEncrypted, 0, bytesToEncrypted.Length);
                         cs.Close();
                     }
                     encryptedBytes = ms.ToArray();
@@ -60,7 +60,7 @@ namespace ECMCS.Utilities
             return encryptedBytes;
         }
 
-        private static byte[] Decrypt(byte[] bytesToBeDecrypted, byte[] secretBytes)
+        private static byte[] Decrypt(byte[] bytesToDecrypted, byte[] secretBytes)
         {
             byte[] decryptedBytes = null;
             var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -76,7 +76,7 @@ namespace ECMCS.Utilities
                     AES.Mode = CipherMode.CBC;
                     using (var cs = new CryptoStream(ms, AES.CreateDecryptor(), CryptoStreamMode.Write))
                     {
-                        cs.Write(bytesToBeDecrypted, 0, bytesToBeDecrypted.Length);
+                        cs.Write(bytesToDecrypted, 0, bytesToDecrypted.Length);
                         cs.Close();
                     }
                     decryptedBytes = ms.ToArray();

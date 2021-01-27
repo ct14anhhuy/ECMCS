@@ -152,14 +152,14 @@ namespace ECMCS.App
             if (_extensions.Any(ext.Equals))
             {
                 frmSyncToECM frm = new frmSyncToECM();
-                frm.OnUploadClosed += Frm_OnUploadClosed1;
+                frm.OnUploadClosed += Frm_OnUploadClosedSync;
                 var delSendMsg = new SendMessenge<(string, string)>(frm.EventListener);
                 delSendMsg((e.FullPath, CommonConstants.EP_LITE_USER));
                 frm.Show();
             }
         }
 
-        private void Frm_OnUploadClosed1(object sender, bool e)
+        private void Frm_OnUploadClosedSync(object sender, bool e)
         {
             if (e)
             {
