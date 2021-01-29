@@ -2,6 +2,7 @@
 using ECMCS.Utilities.FileFolderExtensions;
 using System;
 using System.Diagnostics;
+using System.Net;
 using System.Runtime.InteropServices;
 
 namespace ECMCS.Route
@@ -19,9 +20,8 @@ namespace ECMCS.Route
         private static void Main(string[] args)
         {
             ShowWindow(GetConsoleWindow(), SW_HIDE);
-            string urlParams = UrlHelper.Decode(args[0].Substring(args[0].LastIndexOf(':') + 1)).Trim().Replace(" ", "+");
-            string decrypted = Encryptor.Decrypt(urlParams);
-            RouteToAction(decrypted);
+            string urlParams = UrlHelper.Decode(args[0].Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
+            RouteToAction(urlParams);
         }
 
         private static void RouteToAction(string args)
@@ -35,7 +35,8 @@ namespace ECMCS.Route
                     break;
 
                 case "Redirect":
-                    RedirectAction();
+                    string epLiteId = args.Extract("[", "]")[0];
+                    RedirectAction(epLiteId);
                     break;
 
                 default:
@@ -53,13 +54,14 @@ namespace ECMCS.Route
             downloader.Download();
         }
 
-        private static void RedirectAction()
+        private static void RedirectAction(string epLiteId)
         {
             if (Process.GetProcessesByName("ECMCS.App").Length == 0)
             {
                 Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
             }
-            string baseUrl = ConfigHelper.Read("WebUrl");
+            string empId = WebUtility.UrlEncode(epLiteId);
+            string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?empId=" + empId;
             try
             {
                 Process.Start("chrome", baseUrl).Dispose();

@@ -1,5 +1,4 @@
-﻿using ECMCS.App.Extension;
-using ECMCS.DTO;
+﻿using ECMCS.DTO;
 using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using MetroFramework.Forms;
@@ -62,7 +61,7 @@ namespace ECMCS.App
 
         private void UploadFile()
         {
-            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/filehistory/uploadfile";
+            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/FileHistory/UploadFile";
             var fileUpload = new FileUploadDTO();
             fileUpload.FileId = _fileInfo.Id;
             fileUpload.FileName = _fileInfo.FileName;

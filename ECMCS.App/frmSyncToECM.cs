@@ -1,5 +1,5 @@
-﻿using ECMCS.App.Extension;
-using ECMCS.DTO;
+﻿using ECMCS.DTO;
+using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using MetroFramework.Forms;
 using Newtonsoft.Json;
@@ -145,7 +145,7 @@ namespace ECMCS.App
 
         private void UploadFile()
         {
-            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/fileinfo/uploadnewfile";
+            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/FileInfo/UploadNewFile";
             FileInfoDTO fileInfo = new FileInfoDTO();
             fileInfo.Name = txtFileName.Text;
             fileInfo.OwnerUser = txtOwner.Text;
