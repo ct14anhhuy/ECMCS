@@ -3,7 +3,9 @@ using ECMCS.Utilities.FileFolderExtensions;
 using System;
 using System.Diagnostics;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace ECMCS.Route
 {
@@ -60,16 +62,36 @@ namespace ECMCS.Route
             {
                 Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
             }
-            string empId = WebUtility.UrlEncode(epLiteId);
-            string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?empId=" + empId;
-            try
+            if (CheckServerStatus())
             {
-                Process.Start("chrome", baseUrl).Dispose();
+                InitData(epLiteId);
+                string empId = WebUtility.UrlEncode(epLiteId);
+                string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?empId=" + empId;
+                try
+                {
+                    Process.Start("chrome", baseUrl).Dispose();
+                }
+                catch
+                {
+                    Process.Start($"microsoft-edge:{baseUrl}").Dispose();
+                }
             }
-            catch
-            {
-                Process.Start($"microsoft-edge:{baseUrl}").Dispose();
-            }
+        }
+
+        private static bool CheckServerStatus()
+        {
+            string checkingUrl = $"{ConfigHelper.Read("ApiUrl")}/WSInfo/IsOnline";
+            var client = new HttpClient();
+            var response = client.GetAsync(checkingUrl).Result;
+            return response.IsSuccessStatusCode;
+        }
+
+        private static async void InitData(string epLiteId)
+        {
+            string rootPath = ConfigHelper.Read("SaveFilePath.Root");
+            string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
+            string usersFile = ConfigHelper.Read("JsonFileName.Users");
+            FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
         }
     }
 }

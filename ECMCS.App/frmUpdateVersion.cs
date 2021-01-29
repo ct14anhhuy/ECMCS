@@ -14,10 +14,12 @@ namespace ECMCS.App
     public partial class frmUpdateVersion : MetroForm
     {
         private FileDownloadDTO _fileInfo;
+        private readonly JsonHelper _jsonHelper;
 
         public frmUpdateVersion()
         {
             InitializeComponent();
+            _jsonHelper = new JsonHelper();
         }
 
         private void frmUpdateVersion_Load(object sender, EventArgs e)
@@ -36,7 +38,7 @@ namespace ECMCS.App
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         public void EventListener(FileDownloadDTO fileInfo)
@@ -49,9 +51,12 @@ namespace ECMCS.App
             try
             {
                 UploadFile();
-                _fileInfo.IsUploaded = true;
-                JsonHelper.Update(_fileInfo, x => x.FilePath == _fileInfo.FilePath);
-                this.Close();
+                if (!_fileInfo.IsUploaded)
+                {
+                    throw new Exception();
+                }
+                _jsonHelper.Update(_fileInfo, x => x.FilePath == _fileInfo.FilePath);
+                Close();
             }
             catch (Exception ex)
             {
@@ -65,7 +70,7 @@ namespace ECMCS.App
             var fileUpload = new FileUploadDTO();
             fileUpload.FileId = _fileInfo.Id;
             fileUpload.FileName = _fileInfo.FileName;
-            fileUpload.ModifierUser = CommonConstants.EP_LITE_USER;
+            fileUpload.ModifierUser = _fileInfo.Modifier;
             fileUpload.Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version;
             fileUpload.FileData = File.ReadAllBytes(_fileInfo.FilePath);
             fileUpload.Size = fileUpload.FileData.Length / 1024;
@@ -74,7 +79,7 @@ namespace ECMCS.App
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var client = new EcmHttpClient(_fileInfo.Owner);
             var response = client.PostAsync(uploadUrl, data).Result;
-            _ = response.Content.ReadAsStringAsync().Result;
+            _fileInfo.IsUploaded = response.IsSuccessStatusCode;
         }
 
         private void frmUpdateVersion_FormClosing(object sender, FormClosingEventArgs e)

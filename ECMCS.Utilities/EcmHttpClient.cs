@@ -7,6 +7,7 @@ namespace ECMCS.Utilities
     public class EcmHttpClient : HttpClient
     {
         private string _epLiteId;
+
         public EcmHttpClient(string epLiteId)
         {
             _epLiteId = epLiteId;

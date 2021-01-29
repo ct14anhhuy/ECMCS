@@ -34,7 +34,7 @@ namespace ECMCS.App
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         public void EventListener((string fullPath, string owner) fileInfo)
@@ -134,8 +134,11 @@ namespace ECMCS.App
             try
             {
                 UploadFile();
-                _uploadStatus = true;
-                this.Close();
+                if (!_uploadStatus)
+                {
+                    throw new Exception();
+                }
+                Close();
             }
             catch (Exception ex)
             {
@@ -157,7 +160,7 @@ namespace ECMCS.App
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var client = new EcmHttpClient(fileInfo.OwnerUser);
             var response = client.PostAsync(uploadUrl, data).Result;
-            _ = response.Content.ReadAsStringAsync().Result;
+            _uploadStatus = response.IsSuccessStatusCode;
         }
 
         private event EventHandler<bool> onUploadClosed;

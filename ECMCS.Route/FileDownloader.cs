@@ -10,11 +10,13 @@ namespace ECMCS.Route
     public class FileDownloader
     {
         private readonly string _path = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
+        private readonly JsonHelper _jsonHelper;
         private readonly string _url;
 
         public FileDownloader(string url)
         {
             _url = url;
+            _jsonHelper = new JsonHelper();
         }
 
         public void Download()
@@ -24,11 +26,9 @@ namespace ECMCS.Route
             using (WebClient client = new WebClient())
             {
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
-                Console.WriteLine(fileInfo.Url);
-                Console.WriteLine(fileInfo.FilePath);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
-                JsonHelper.Add(fileInfo);
+                _jsonHelper.Add(fileInfo);
             }
         }
 

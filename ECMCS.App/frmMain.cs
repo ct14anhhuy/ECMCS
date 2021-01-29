@@ -4,6 +4,7 @@ using ECMCS.Utilities.FileFolderExtensions;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ECMCS.App
@@ -17,6 +18,8 @@ namespace ECMCS.App
         private readonly string _syncPath = ConfigHelper.Read("SyncFilePath");
         private readonly string _protocolName = ConfigHelper.Read("Protocol.Name");
         private readonly string _routeAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Route.exe";
+        private readonly JsonHelper _jsonHelper;
+        private string _epLiteId;
 
         public frmMain()
         {
@@ -27,6 +30,7 @@ namespace ECMCS.App
 
             MonitorWatcher(_monitorPath);
             SyncWatcher(_syncPath);
+            _jsonHelper = new JsonHelper();
         }
 
         private void CreateResources()
@@ -34,12 +38,14 @@ namespace ECMCS.App
             string rootPath = ConfigHelper.Read("SaveFilePath.Root");
             string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
             string viewPath = ConfigHelper.Read("SaveFilePath.View");
-            string jsonFileName = ConfigHelper.Read("JsonFileName");
+            string jsonFile = ConfigHelper.Read("JsonFileName.Files");
+            string usersFile = ConfigHelper.Read("JsonFileName.Users");
 
             FileHelper.CreatePath(rootPath, monitorPath, viewPath);
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
             FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
-            FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFileName}");
+            FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFile}");
+            FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
 
             FileHelper.CreatePath(_syncPath);
             CreateFolderIcon(_syncPath);
@@ -60,11 +66,11 @@ namespace ECMCS.App
             notifyIcon.ShowBalloonTip(1000);
         }
 
-        private void OpenUpdateFrm(FileDownloadDTO fileInfo)
+        private void OpenUpdateFrm(FileDownloadDTO fileDownload)
         {
             var frm = new frmUpdateVersion();
             var delSendMsg = new SendMessenge<FileDownloadDTO>(frm.EventListener);
-            delSendMsg(fileInfo);
+            delSendMsg(fileDownload);
             frm.OnUploadClosed += Frm_OnUploadClosed;
             frm.Show();
         }
@@ -109,7 +115,20 @@ namespace ECMCS.App
                 IncludeSubdirectories = true,
                 SynchronizingObject = this
             };
-            monitorWatcher.Deleted += MonitorWatcher_Deleted; ;
+            monitorWatcher.Deleted += MonitorWatcher_Deleted;
+            monitorWatcher.Changed += MonitorWatcher_Changed;
+        }
+
+        private void MonitorWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            if (ext == ".json")
+            {
+                if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
+                {
+                    ShowBalloonTip("Login Success", "", ToolTipIcon.Info);
+                }
+            }
         }
 
         private void MonitorWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -118,12 +137,13 @@ namespace ECMCS.App
             if (_extensions.Any(ext.Equals))
             {
                 string subPath = Path.GetDirectoryName(e.FullPath);
-                var fileInfo = JsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                if (fileInfo != null && !fileInfo.ReadOnly)
+                var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
+                fileDownload.Modifier = _epLiteId;
+                if (fileDownload != null && !fileDownload.ReadOnly)
                 {
-                    fileInfo.IsDone = true;
-                    JsonHelper.Update(fileInfo, x => x.FilePath == fileInfo.FilePath);
-                    OpenUpdateFrm(fileInfo);
+                    fileDownload.IsDone = true;
+                    _jsonHelper.Update(fileDownload, x => x.FilePath == fileDownload.FilePath);
+                    OpenUpdateFrm(fileDownload);
                 }
             }
         }
@@ -154,7 +174,7 @@ namespace ECMCS.App
                 frmSyncToECM frm = new frmSyncToECM();
                 frm.OnUploadClosed += Frm_OnUploadClosedSync;
                 var delSendMsg = new SendMessenge<(string, string)>(frm.EventListener);
-                delSendMsg((e.FullPath, CommonConstants.EP_LITE_USER));
+                delSendMsg((e.FullPath, _epLiteId));
                 frm.Show();
             }
         }

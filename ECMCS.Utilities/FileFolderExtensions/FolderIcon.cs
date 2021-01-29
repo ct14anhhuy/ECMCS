@@ -9,7 +9,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
 
         public FolderIcon(string folderPath)
         {
-            this.FolderPath = folderPath;
+            FolderPath = folderPath;
         }
 
         public void CreateFolderIcon(string iconFilePath, string infoTip)
@@ -24,19 +24,19 @@ namespace ECMCS.Utilities.FileFolderExtensions
 
         public void CreateFolderIcon(string targetFolderPath, string iconFilePath, string infoTip)
         {
-            this.FolderPath = targetFolderPath;
-            this.CreateFolderIcon(iconFilePath, infoTip);
+            FolderPath = targetFolderPath;
+            CreateFolderIcon(iconFilePath, infoTip);
         }
 
         public string FolderPath
         {
-            get { return this._folderPath; }
+            get { return _folderPath; }
             set
             {
                 _folderPath = value;
-                if (!this._folderPath.EndsWith("\\"))
+                if (!_folderPath.EndsWith("\\"))
                 {
-                    this._folderPath += "\\";
+                    _folderPath += "\\";
                 }
             }
         }
@@ -49,17 +49,17 @@ namespace ECMCS.Utilities.FileFolderExtensions
 
         private bool CreateFolder()
         {
-            if (this.FolderPath.Length == 0)
+            if (FolderPath.Length == 0)
             {
                 return false;
             }
-            if (Directory.Exists(this.FolderPath))
+            if (Directory.Exists(FolderPath))
             {
                 return true;
             }
             try
             {
-                DirectoryInfo di = Directory.CreateDirectory(this.FolderPath);
+                DirectoryInfo di = Directory.CreateDirectory(FolderPath);
             }
             catch
             {
@@ -71,7 +71,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
 
         private bool CreateDesktopIniFile(string iconFilePath, bool getIconFromDLL, int iconIndex, string infoTip)
         {
-            if (!Directory.Exists(this.FolderPath))
+            if (!Directory.Exists(FolderPath))
             {
                 return false;
             }
@@ -83,45 +83,45 @@ namespace ECMCS.Utilities.FileFolderExtensions
             {
                 iconIndex = 0;
             }
-            this.IniPath = this.FolderPath + "desktop.ini";
-            IniWriter.WriteValue(".ShellClassInfo", "IconFile", iconFilePath, this.IniPath);
-            IniWriter.WriteValue(".ShellClassInfo", "IconIndex", iconIndex.ToString(), this.IniPath);
-            IniWriter.WriteValue(".ShellClassInfo", "InfoTip", infoTip, this.IniPath);
+            IniPath = FolderPath + "desktop.ini";
+            IniWriter.WriteValue(".ShellClassInfo", "IconFile", iconFilePath, IniPath);
+            IniWriter.WriteValue(".ShellClassInfo", "IconIndex", iconIndex.ToString(), IniPath);
+            IniWriter.WriteValue(".ShellClassInfo", "InfoTip", infoTip, IniPath);
 
             return true;
         }
 
         private void CreateDesktopIniFile(string iconFilePath, string infoTip)
         {
-            this.CreateDesktopIniFile(iconFilePath, false, 0, infoTip);
+            CreateDesktopIniFile(iconFilePath, false, 0, infoTip);
         }
 
         private bool SetIniFileAttributes()
         {
-            if (!File.Exists(this.IniPath))
+            if (!File.Exists(IniPath))
             {
                 return false;
             }
-            if ((File.GetAttributes(this.IniPath) & FileAttributes.Hidden) != FileAttributes.Hidden)
+            if ((File.GetAttributes(IniPath) & FileAttributes.Hidden) != FileAttributes.Hidden)
             {
-                File.SetAttributes(this.IniPath, File.GetAttributes(this.IniPath) | FileAttributes.Hidden);
+                File.SetAttributes(IniPath, File.GetAttributes(IniPath) | FileAttributes.Hidden);
             }
-            if ((File.GetAttributes(this.IniPath) & FileAttributes.System) != FileAttributes.System)
+            if ((File.GetAttributes(IniPath) & FileAttributes.System) != FileAttributes.System)
             {
-                File.SetAttributes(this.IniPath, File.GetAttributes(this.IniPath) | FileAttributes.System);
+                File.SetAttributes(IniPath, File.GetAttributes(IniPath) | FileAttributes.System);
             }
             return true;
         }
 
         private bool SetFolderAttributes()
         {
-            if (!Directory.Exists(this.FolderPath))
+            if (!Directory.Exists(FolderPath))
             {
                 return false;
             }
-            if ((File.GetAttributes(this.FolderPath) & FileAttributes.System) != FileAttributes.System)
+            if ((File.GetAttributes(FolderPath) & FileAttributes.System) != FileAttributes.System)
             {
-                File.SetAttributes(this.FolderPath, File.GetAttributes(this.FolderPath) | FileAttributes.System);
+                File.SetAttributes(FolderPath, File.GetAttributes(FolderPath) | FileAttributes.System);
             }
             return true;
         }

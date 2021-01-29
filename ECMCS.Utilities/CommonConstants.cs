@@ -2,6 +2,7 @@
 {
     public static class CommonConstants
     {
-        public const string EP_LITE_USER = "anhhuy.le";
+        public const int JSON_FILE = 1;
+        public const int USER_FILE = 2;
     }
 }
