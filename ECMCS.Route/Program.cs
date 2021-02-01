@@ -1,5 +1,6 @@
 ﻿using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
+using log4net;
 using System;
 using System.Diagnostics;
 using System.Net;
@@ -21,8 +22,21 @@ namespace ECMCS.Route
         private static void Main(string[] args)
         {
             ShowWindow(GetConsoleWindow(), SW_HIDE);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             string urlParams = UrlHelper.Decode(args[0].Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
             RouteToAction(urlParams);
+        }
+
+        /// <summary>
+        /// Global logs
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            ThreadContext.Properties["appName"] = "Route";
+            LogHelper.Error((e.ExceptionObject as Exception).Message);
+            Environment.Exit(1);
         }
 
         private static void RouteToAction(string args)

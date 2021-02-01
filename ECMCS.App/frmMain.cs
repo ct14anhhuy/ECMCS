@@ -20,6 +20,7 @@ namespace ECMCS.App
         private readonly string _routeAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
+        private int _fireCount = 0;
 
         public frmMain()
         {
@@ -120,17 +121,26 @@ namespace ECMCS.App
 
         private void MonitorWatcher_Changed(object sender, FileSystemEventArgs e)
         {
-            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (ext == ".json")
+            _fireCount++;
+            if (_fireCount == 1)
             {
-                if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
+                var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+                if (ext == ".json")
                 {
-                    JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
-                    var json = jsonHelper.Get<object>().FirstOrDefault();
-                    var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
-                    _epLiteId = emp.epLiteId;
-                    ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
+                    if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
+                    {
+                        JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+                        var json = jsonHelper.Get<object>().FirstOrDefault();
+                        var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+                        _epLiteId = emp.epLiteId;
+                        ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
+                        LogHelper.Info("Logged on: " + emp.epLiteId);
+                    }
                 }
+            }
+            else
+            {
+                _fireCount = 0;
             }
         }
 
