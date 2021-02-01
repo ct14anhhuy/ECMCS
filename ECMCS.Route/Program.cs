@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace ECMCS.Route
 {
@@ -86,12 +85,15 @@ namespace ECMCS.Route
             return response.IsSuccessStatusCode;
         }
 
-        private static async void InitData(string epLiteId)
+        private static void InitData(string epLiteId)
         {
             string rootPath = ConfigHelper.Read("SaveFilePath.Root");
             string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
             string usersFile = ConfigHelper.Read("JsonFileName.Users");
             FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
+
+            JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+            jsonHelper.AddDefault<object>(new { epLiteId });
         }
     }
 }

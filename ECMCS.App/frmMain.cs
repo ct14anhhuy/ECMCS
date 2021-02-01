@@ -1,10 +1,10 @@
 ﻿using ECMCS.DTO;
 using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ECMCS.App
@@ -37,13 +37,12 @@ namespace ECMCS.App
         {
             string rootPath = ConfigHelper.Read("SaveFilePath.Root");
             string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
-            string viewPath = ConfigHelper.Read("SaveFilePath.View");
             string jsonFile = ConfigHelper.Read("JsonFileName.Files");
             string usersFile = ConfigHelper.Read("JsonFileName.Users");
 
-            FileHelper.CreatePath(rootPath, monitorPath, viewPath);
+            FileHelper.CreatePath(rootPath, monitorPath);
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
-            FileHelper.Empty($"{rootPath}{monitorPath}", $"{rootPath}{viewPath}");
+            FileHelper.Empty($"{rootPath}{monitorPath}");
             FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFile}");
             FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
 
@@ -126,7 +125,11 @@ namespace ECMCS.App
             {
                 if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
                 {
-                    ShowBalloonTip("Login Success", "", ToolTipIcon.Info);
+                    JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+                    var json = jsonHelper.Get<object>().FirstOrDefault();
+                    var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+                    _epLiteId = emp.epLiteId;
+                    ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
                 }
             }
         }

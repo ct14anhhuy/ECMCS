@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +27,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
             }
         }
 
-        public List<TEntity> Get<TEntity>(Func<TEntity, bool> condition = null) where TEntity : class
+        public List<TEntity> Get<TEntity>(Func<TEntity, bool> condition = null)
         {
             List<TEntity> objs;
             using (StreamReader sr = new StreamReader(_jsonFile))
@@ -46,7 +45,19 @@ namespace ECMCS.Utilities.FileFolderExtensions
             }
         }
 
-        public void Add<TEntity>(TEntity entity) where TEntity : class
+        public void AddDefault<TEntity>(TEntity entity)
+        {
+            string newJson;
+            using (StreamReader sr = new StreamReader(_jsonFile))
+            {
+                List<TEntity> objs = new List<TEntity>();
+                objs.Add(entity);
+                newJson = JsonConvert.SerializeObject(objs);
+            }
+            File.WriteAllText(_jsonFile, newJson);
+        }
+
+        public void Add<TEntity>(TEntity entity)
         {
             string newJson;
             using (StreamReader sr = new StreamReader(_jsonFile))
@@ -63,7 +74,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
             File.WriteAllText(_jsonFile, newJson);
         }
 
-        public void Update<TEntity>(TEntity entity, Predicate<TEntity> match) where TEntity : class
+        public void Update<TEntity>(TEntity entity, Predicate<TEntity> match)
         {
             string newJson;
             using (StreamReader sr = new StreamReader(_jsonFile))
@@ -84,7 +95,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
             File.WriteAllText(_jsonFile, newJson);
         }
 
-        public void Remove<TEntity>(Predicate<TEntity> match) where TEntity : class
+        public void Remove<TEntity>(Predicate<TEntity> match)
         {
             string newJson;
             using (StreamReader sr = new StreamReader(_jsonFile))
@@ -102,6 +113,12 @@ namespace ECMCS.Utilities.FileFolderExtensions
                 }
                 newJson = JsonConvert.SerializeObject(objs);
             }
+            File.WriteAllText(_jsonFile, newJson);
+        }
+
+        public void RemoveAll()
+        {
+            string newJson = "";
             File.WriteAllText(_jsonFile, newJson);
         }
     }
