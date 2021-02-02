@@ -1,8 +1,10 @@
 ﻿using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
@@ -34,7 +36,7 @@ namespace ECMCS.Route
         /// <param name="e"></param>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            ThreadContext.Properties["appName"] = "Route";
+            ThreadContext.Properties["appName"] = "ECMCS.Route";
             LogHelper.Error((e.ExceptionObject as Exception).Message);
             Environment.Exit(1);
         }
@@ -101,13 +103,21 @@ namespace ECMCS.Route
 
         private static void InitData(string epLiteId)
         {
-            string rootPath = ConfigHelper.Read("SaveFilePath.Root");
-            string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
-            string usersFile = ConfigHelper.Read("JsonFileName.Users");
-            FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
-
             JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
-            jsonHelper.AddDefault<object>(new { epLiteId });
+            var emp = new { epLiteId };
+            var json = jsonHelper.Get<object>();
+            if (json != null)
+            {
+                var currentUser = JsonConvert.DeserializeAnonymousType(json.FirstOrDefault().ToString(), emp);
+                if (emp.epLiteId != currentUser.epLiteId)
+                {
+                    jsonHelper.AddDefault<object>(emp);
+                }
+            }
+            else
+            {
+                jsonHelper.AddDefault<object>(emp);
+            }
         }
     }
 }

@@ -125,6 +125,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extension\AppUpdate.cs" />
+    <Compile Include="Extension\log4net\CustomPatternLayout.cs" />
+    <Compile Include="Extension\log4net\EncodedMessagePatternConvertor.cs" />
     <Compile Include="frmSyncToECM.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -227,8 +229,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="logs\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

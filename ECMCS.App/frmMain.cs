@@ -38,15 +38,13 @@ namespace ECMCS.App
         {
             string rootPath = ConfigHelper.Read("SaveFilePath.Root");
             string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
+            string logPath = ConfigHelper.Read("SaveFilePath.Log");
             string jsonFile = ConfigHelper.Read("JsonFileName.Files");
             string usersFile = ConfigHelper.Read("JsonFileName.Users");
-
-            FileHelper.CreatePath(rootPath, monitorPath);
+            FileHelper.CreatePath(rootPath, monitorPath, logPath);
             FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
             FileHelper.Empty($"{rootPath}{monitorPath}");
-            FileHelper.CreateFile($"{rootPath}{monitorPath}{jsonFile}");
-            FileHelper.CreateFile($"{rootPath}{monitorPath}{usersFile}");
-
+            FileHelper.CreateFile($"{rootPath}{monitorPath}", jsonFile, usersFile);
             FileHelper.CreatePath(_syncPath);
             CreateFolderIcon(_syncPath);
         }
@@ -124,18 +122,14 @@ namespace ECMCS.App
             _fireCount++;
             if (_fireCount == 1)
             {
-                var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-                if (ext == ".json")
+                if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
                 {
-                    if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
-                    {
-                        JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
-                        var json = jsonHelper.Get<object>().FirstOrDefault();
-                        var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
-                        _epLiteId = emp.epLiteId;
-                        ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
-                        LogHelper.Info("Logged on: " + emp.epLiteId);
-                    }
+                    JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+                    var json = jsonHelper.Get<object>().FirstOrDefault();
+                    var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+                    _epLiteId = emp.epLiteId;
+                    ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
+                    LogHelper.Info("Logged on: " + emp.epLiteId);
                 }
             }
             else

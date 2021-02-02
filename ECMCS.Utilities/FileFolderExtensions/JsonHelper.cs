@@ -33,15 +33,19 @@ namespace ECMCS.Utilities.FileFolderExtensions
             using (StreamReader sr = new StreamReader(_jsonFile))
             {
                 string json = sr.ReadToEnd();
-                objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
-                if (objs == null || condition == null)
+                if (!string.IsNullOrEmpty(json))
                 {
-                    return objs;
+                    objs = JsonConvert.DeserializeObject<List<TEntity>>(json);
+                    if (objs == null || condition == null)
+                    {
+                        return objs;
+                    }
+                    else
+                    {
+                        return objs.Where(condition).ToList();
+                    }
                 }
-                else
-                {
-                    return objs.Where(condition).ToList();
-                }
+                return null;
             }
         }
 
@@ -50,9 +54,8 @@ namespace ECMCS.Utilities.FileFolderExtensions
             string newJson;
             using (StreamReader sr = new StreamReader(_jsonFile))
             {
-                List<TEntity> objs = new List<TEntity>();
-                objs.Add(entity);
-                newJson = JsonConvert.SerializeObject(objs);
+                List<TEntity> objs = new List<TEntity> { entity };
+                newJson = JsonConvert.SerializeObject(objs, Formatting.Indented);
             }
             File.WriteAllText(_jsonFile, newJson);
         }
@@ -69,7 +72,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                     objs = new List<TEntity>();
                 }
                 objs.Add(entity);
-                newJson = JsonConvert.SerializeObject(objs);
+                newJson = JsonConvert.SerializeObject(objs, Formatting.Indented);
             }
             File.WriteAllText(_jsonFile, newJson);
         }

@@ -48,11 +48,25 @@ namespace ECMCS.Utilities.FileFolderExtensions
             }
         }
 
-        public static void CreateFile(string filePath)
+        public static void CreateFile(string path, params string[] fileName)
         {
-            if (!File.Exists(filePath))
+            if (fileName is null)
             {
-                File.Create(filePath).Dispose();
+                if (!File.Exists(path))
+                {
+                    File.Create(path).Dispose();
+                }
+            }
+            else
+            {
+                for (int i = 0; i < fileName.Length; i++)
+                {
+                    string fullPath = path + fileName[i];
+                    if (!File.Exists(fullPath))
+                    {
+                        File.Create(fullPath).Dispose();
+                    }
+                }
             }
         }
 

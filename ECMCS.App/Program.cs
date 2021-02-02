@@ -17,7 +17,7 @@ namespace ECMCS.App
         private static void Main()
         {
             log4net.Config.XmlConfigurator.Configure();
-            ThreadContext.Properties["appName"] = "Monitor";
+            ThreadContext.Properties["appName"] = "ECMCS.App";
             Application.ThreadException += Application_ThreadException;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;

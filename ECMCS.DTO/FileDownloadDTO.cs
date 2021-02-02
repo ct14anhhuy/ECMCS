@@ -12,7 +12,7 @@ namespace ECMCS.DTO
         public string Modifier { get; set; }
         public string Version { get; set; }
         public bool ReadOnly { get; set; } = true;
-        public DateTime ModifiedDate { get; set; } = DateTime.Today;
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public bool IsDone { get; set; } = false;
         public bool IsUploaded { get; set; } = false;
     }
