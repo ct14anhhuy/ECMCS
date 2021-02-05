@@ -5,9 +5,9 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace ECMCS.Route
 {
@@ -77,11 +77,11 @@ namespace ECMCS.Route
             {
                 Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
             }
-            if (CheckServerStatus())
+            string accessToken = GetToken(epLiteId);
+            if (!string.IsNullOrEmpty(accessToken))
             {
                 InitData(epLiteId);
-                string empId = WebUtility.UrlEncode(epLiteId);
-                string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?empId=" + empId;
+                string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?token=" + accessToken;
                 try
                 {
                     Process.Start("chrome", baseUrl).Dispose();
@@ -93,12 +93,14 @@ namespace ECMCS.Route
             }
         }
 
-        private static bool CheckServerStatus()
+        private static string GetToken(string epLiteId)
         {
-            string checkingUrl = $"{ConfigHelper.Read("ApiUrl")}/WSInfo/IsOnline";
+            string tokenUrl = $"{ConfigHelper.Read("ApiUrl")}/Token/GetToken?epLiteId=" + epLiteId;
             var client = new HttpClient();
-            var response = client.GetAsync(checkingUrl).Result;
-            return response.IsSuccessStatusCode;
+            var response = client.GetAsync(tokenUrl).Result;
+            var result = response.Content.ReadAsStringAsync().Result;
+            string accessToken = Regex.Replace(result, "\\\"", "");
+            return accessToken;
         }
 
         private static void InitData(string epLiteId)
