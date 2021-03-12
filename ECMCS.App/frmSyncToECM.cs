@@ -1,6 +1,5 @@
 ﻿using ECMCS.DTO;
 using ECMCS.Utilities;
-using ECMCS.Utilities.FileFolderExtensions;
 using MetroFramework.Forms;
 using Newtonsoft.Json;
 using System;
@@ -46,7 +45,7 @@ namespace ECMCS.App
 
         private async void GetECMDirectory()
         {
-            string url = $"{ConfigHelper.Read("ApiUrl")}/directory/GetTreeDirectory";
+            string url = $"{SystemParams.API_URL}/directory/GetTreeDirectory";
             var client = new EcmHttpClient(txtOwner.Text);
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
@@ -148,7 +147,7 @@ namespace ECMCS.App
 
         private void UploadFile()
         {
-            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/FileInfo/UploadNewFile";
+            string uploadUrl = $"{SystemParams.API_URL}/FileInfo/UploadNewFile";
             FileInfoDTO fileInfo = new FileInfoDTO();
             fileInfo.Name = txtFileName.Text;
             fileInfo.OwnerUser = txtOwner.Text;

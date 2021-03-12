@@ -9,7 +9,7 @@ namespace ECMCS.Route
 {
     public class FileDownloader
     {
-        private readonly string _path = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
+        private readonly string _path = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly JsonHelper _jsonHelper;
         private readonly string _url;
 

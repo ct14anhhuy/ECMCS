@@ -4,8 +4,10 @@ using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
@@ -52,7 +54,7 @@ namespace ECMCS.Route
                     break;
 
                 case "Redirect":
-                    string epLiteId = args.Extract("[", "]")[0];
+                    string epLiteId = ReadDRMLog();
                     RedirectAction(epLiteId);
                     break;
 
@@ -75,13 +77,20 @@ namespace ECMCS.Route
         {
             if (Process.GetProcessesByName("ECMCS.App").Length == 0)
             {
-                Process.Start($"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.App.exe").Dispose();
+                if (Debugger.IsAttached)
+                {
+                    Process.Start(Assembly.GetExecutingAssembly().Location).Dispose();
+                }
+                else
+                {
+                    Process.Start($@"{Path.GetDirectoryName(Assembly.GetAssembly(typeof(Program)).CodeBase)}\ECMCS.App.exe").Dispose();
+                }
             }
             string accessToken = GetToken(epLiteId);
             if (!string.IsNullOrEmpty(accessToken))
             {
                 InitData(epLiteId);
-                string baseUrl = ConfigHelper.Read("WebUrl") + "/AuthGate?token=" + accessToken;
+                string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
                 try
                 {
                     Process.Start("chrome", baseUrl).Dispose();
@@ -95,12 +104,16 @@ namespace ECMCS.Route
 
         private static string GetToken(string epLiteId)
         {
-            string tokenUrl = $"{ConfigHelper.Read("ApiUrl")}/Token/GetToken?epLiteId=" + epLiteId;
+            string tokenUrl = $"{SystemParams.API_URL}/Token/GetToken?epLiteId=" + epLiteId;
             var client = new HttpClient();
             var response = client.GetAsync(tokenUrl).Result;
-            var result = response.Content.ReadAsStringAsync().Result;
-            string accessToken = Regex.Replace(result, "\\\"", "");
-            return accessToken;
+            if (response.IsSuccessStatusCode)
+            {
+                var result = response.Content.ReadAsStringAsync().Result;
+                string accessToken = Regex.Replace(result, "\\\"", "");
+                return accessToken;
+            }
+            return string.Empty;
         }
 
         private static void InitData(string epLiteId)
@@ -120,6 +133,30 @@ namespace ECMCS.Route
             {
                 jsonHelper.AddDefault<object>(emp);
             }
+        }
+
+        private static string ReadDRMLog()
+        {
+            string currentUser = "";
+            string drmLogFile = Environment.Is64BitOperatingSystem ? SystemParams.DRM_LOG_FILE_X64 : SystemParams.DRM_LOG_FILE_X32;
+            foreach (var line in File.ReadLines(drmLogFile).Reverse())
+            {
+                if (line.Contains("UserID"))
+                {
+                    if (CheckLoggedIn(line))
+                    {
+                        throw new Exception("You are not logged in");
+                    }
+                    currentUser = line.Trim().Substring(line.LastIndexOf(" ") + 1);
+                    break;
+                }
+            }
+            return currentUser;
+        }
+
+        private static bool CheckLoggedIn(string line)
+        {
+            return line.Contains("UserID = (null)") || line.Contains("InitInstance");
         }
     }
 }

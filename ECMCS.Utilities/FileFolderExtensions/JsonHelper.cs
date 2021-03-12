@@ -15,11 +15,11 @@ namespace ECMCS.Utilities.FileFolderExtensions
             switch (jsonIndex)
             {
                 case 1:
-                    _jsonFile = $"{ConfigHelper.Read("SaveFilePath.Root")}{ConfigHelper.Read("SaveFilePath.Monitor")}{ConfigHelper.Read("JsonFileName.Files")}";
+                    _jsonFile = $"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}{SystemParams.JSON_FILES}";
                     break;
 
                 case 2:
-                    _jsonFile = $"{ConfigHelper.Read("SaveFilePath.Root")}{ConfigHelper.Read("SaveFilePath.Monitor")}{ConfigHelper.Read("JsonFileName.Users")}";
+                    _jsonFile = $"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}{SystemParams.JSON_USERS}";
                     break;
 
                 default:
@@ -45,6 +45,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                         return objs.Where(condition).ToList();
                     }
                 }
+                sr.Close();
                 return null;
             }
         }
@@ -56,6 +57,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
             {
                 List<TEntity> objs = new List<TEntity> { entity };
                 newJson = JsonConvert.SerializeObject(objs, Formatting.Indented);
+                sr.Close();
             }
             File.WriteAllText(_jsonFile, newJson);
         }
@@ -73,6 +75,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                 }
                 objs.Add(entity);
                 newJson = JsonConvert.SerializeObject(objs, Formatting.Indented);
+                sr.Close();
             }
             File.WriteAllText(_jsonFile, newJson);
         }
@@ -94,6 +97,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                     objs[idx] = entity;
                 }
                 newJson = JsonConvert.SerializeObject(objs);
+                sr.Close();
             }
             File.WriteAllText(_jsonFile, newJson);
         }
@@ -115,6 +119,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                     objs.RemoveAt(idx);
                 }
                 newJson = JsonConvert.SerializeObject(objs);
+                sr.Close();
             }
             File.WriteAllText(_jsonFile, newJson);
         }

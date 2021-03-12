@@ -5,6 +5,7 @@ using MetroFramework.Forms;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Windows.Forms;
@@ -66,11 +67,11 @@ namespace ECMCS.App
 
         private void UploadFile()
         {
-            string uploadUrl = $"{ConfigHelper.Read("ApiUrl")}/FileHistory/UploadFile";
+            string uploadUrl = $"{SystemParams.API_URL}/FileHistory/UploadFile";
             var fileUpload = new FileUploadDTO();
             fileUpload.FileId = _fileInfo.Id;
             fileUpload.FileName = _fileInfo.FileName;
-            fileUpload.ModifierUser = _fileInfo.Modifier;
+            fileUpload.ModifierUser = CheckModifier();
             fileUpload.Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version;
             fileUpload.FileData = File.ReadAllBytes(_fileInfo.FilePath);
             fileUpload.Size = fileUpload.FileData.Length / 1024;
@@ -80,6 +81,14 @@ namespace ECMCS.App
             var client = new EcmHttpClient(_fileInfo.Owner);
             var response = client.PostAsync(uploadUrl, data).Result;
             _fileInfo.IsUploaded = response.IsSuccessStatusCode;
+        }
+
+        private string CheckModifier()
+        {
+            JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+            var json = jsonHelper.Get<object>().FirstOrDefault();
+            var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+            return emp.epLiteId;
         }
 
         private void frmUpdateVersion_FormClosing(object sender, FormClosingEventArgs e)

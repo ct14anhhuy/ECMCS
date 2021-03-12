@@ -11,7 +11,7 @@ namespace ECMCS.Utilities
         public EcmHttpClient(string epLiteId)
         {
             _epLiteId = epLiteId;
-            string getTokenUrl = $"{ConfigHelper.Read("ApiUrl")}/Token/GetToken?epLiteId=" + _epLiteId;
+            string getTokenUrl = $"{SystemParams.API_URL}/Token/GetToken?epLiteId=" + _epLiteId;
             var client = new HttpClient();
             var response = client.GetAsync(getTokenUrl).Result;
             var result = response.Content.ReadAsStringAsync().Result;
@@ -21,7 +21,7 @@ namespace ECMCS.Utilities
 
         public string GetToken()
         {
-            string getTokenUrl = $"{ConfigHelper.Read("ApiUrl")}/Token/GetToken?epLiteId=" + _epLiteId;
+            string getTokenUrl = $"{SystemParams.API_URL}/Token/GetToken?epLiteId=" + _epLiteId;
             var client = new HttpClient();
             var response = client.GetAsync(getTokenUrl).Result;
             var result = response.Content.ReadAsStringAsync().Result;

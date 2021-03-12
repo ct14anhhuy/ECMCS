@@ -14,10 +14,8 @@ namespace ECMCS.App
     public partial class frmMain : Form
     {
         private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
-        private readonly string _monitorPath = ConfigHelper.Read("SaveFilePath.Root") + ConfigHelper.Read("SaveFilePath.Monitor");
-        private readonly string _syncPath = ConfigHelper.Read("SyncFilePath");
-        private readonly string _protocolName = ConfigHelper.Read("Protocol.Name");
-        private readonly string _routeAppPath = $"{AppDomain.CurrentDomain.BaseDirectory}ECMCS.Route.exe";
+        private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
+        private readonly string _routeAppPath = $@"{Directory.GetCurrentDirectory()}\ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
         private int _fireCount = 0;
@@ -25,28 +23,22 @@ namespace ECMCS.App
         public frmMain()
         {
             InitializeComponent();
-            ProtocolHelper.Create(_protocolName, _routeAppPath);
+            ProtocolHelper.Create(SystemParams.PROTOCOL_NAME, _routeAppPath);
             CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
-
             MonitorWatcher(_monitorPath);
-            SyncWatcher(_syncPath);
+            SyncWatcher(SystemParams.SYNC_FILE_PATH);
             _jsonHelper = new JsonHelper();
         }
 
         private void CreateResources()
         {
-            string rootPath = ConfigHelper.Read("SaveFilePath.Root");
-            string monitorPath = ConfigHelper.Read("SaveFilePath.Monitor");
-            string logPath = ConfigHelper.Read("SaveFilePath.Log");
-            string jsonFile = ConfigHelper.Read("JsonFileName.Files");
-            string usersFile = ConfigHelper.Read("JsonFileName.Users");
-            FileHelper.CreatePath(rootPath, monitorPath, logPath);
-            FileHelper.SetHiddenFolder(rootPath.TrimEnd('\\'), false);
-            FileHelper.Empty($"{rootPath}{monitorPath}");
-            FileHelper.CreateFile($"{rootPath}{monitorPath}", jsonFile, usersFile);
-            FileHelper.CreatePath(_syncPath);
-            CreateFolderIcon(_syncPath);
+            FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
+            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
+            FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
+            FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
+            FileHelper.CreatePath(SystemParams.SYNC_FILE_PATH);
+            CreateFolderIcon(SystemParams.SYNC_FILE_PATH);
         }
 
         private void CreateFolderIcon(string folderPath)
@@ -122,7 +114,7 @@ namespace ECMCS.App
             _fireCount++;
             if (_fireCount == 1)
             {
-                if (e.Name == ConfigHelper.Read("JsonFileName.Users"))
+                if (e.Name == SystemParams.JSON_USERS)
                 {
                     JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
                     var json = jsonHelper.Get<object>().FirstOrDefault();
