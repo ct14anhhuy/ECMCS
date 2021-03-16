@@ -14,11 +14,11 @@ namespace ECMCS.Utilities.FileFolderExtensions
         {
             switch (jsonIndex)
             {
-                case 1:
+                case CommonConstants.JSON_FILE:
                     _jsonFile = $"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}{SystemParams.JSON_FILES}";
                     break;
 
-                case 2:
+                case CommonConstants.USER_FILE:
                     _jsonFile = $"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}{SystemParams.JSON_USERS}";
                     break;
 

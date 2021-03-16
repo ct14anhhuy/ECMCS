@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ECMCS.Route
 {
@@ -25,10 +26,19 @@ namespace ECMCS.Route
 
         private static void Main(string[] args)
         {
-            ShowWindow(GetConsoleWindow(), SW_HIDE);
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            string urlParams = UrlHelper.Decode(args[0].Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
-            RouteToAction(urlParams);
+            try
+            {
+                //ShowWindow(GetConsoleWindow(), SW_HIDE);
+                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+                string encodedUrl = HttpUtility.UrlDecode(args[0]);
+                string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
+                RouteToAction(urlParams);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Console.ReadLine();
         }
 
         /// <summary>
