@@ -63,8 +63,7 @@ namespace ECMCS.App
             foreach (DirectoryDTO item in directories)
             {
                 TreeNode newNode = new TreeNode(item.Name);
-                TreeNode parent;
-                if (dict.TryGetValue(Convert.ToInt32(item.ParentId), out parent))
+                if (dict.TryGetValue(Convert.ToInt32(item.ParentId), out TreeNode parent))
                 {
                     parent.Nodes.Add(newNode);
                 }
@@ -82,8 +81,7 @@ namespace ECMCS.App
             foreach (DirectoryDTO item in orphans)
             {
                 TreeNode orphan = dict[item.Id];
-                TreeNode parent;
-                if (dict.TryGetValue(Convert.ToInt32(item.ParentId), out parent))
+                if (dict.TryGetValue(Convert.ToInt32(item.ParentId), out TreeNode parent))
                 {
                     parent.Nodes.Add(orphan);
                 }
@@ -148,12 +146,14 @@ namespace ECMCS.App
         private void UploadFile()
         {
             string uploadUrl = $"{SystemParams.API_URL}/FileInfo/UploadNewFile";
-            FileInfoDTO fileInfo = new FileInfoDTO();
-            fileInfo.Name = txtFileName.Text;
-            fileInfo.OwnerUser = txtOwner.Text;
-            fileInfo.DirectoryId = _curId;
-            fileInfo.Tag = txtTag.Text;
-            fileInfo.FileData = File.ReadAllBytes(_fullPath);
+            FileInfoDTO fileInfo = new FileInfoDTO
+            {
+                Name = txtFileName.Text,
+                OwnerUser = txtOwner.Text,
+                DirectoryId = _curId,
+                Tag = txtTag.Text,
+                FileData = File.ReadAllBytes(_fullPath)
+            };
 
             var json = JsonConvert.SerializeObject(fileInfo);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
@@ -178,10 +178,7 @@ namespace ECMCS.App
 
         private void UploadClosed(bool uploadStatus)
         {
-            if (onUploadClosed != null)
-            {
-                onUploadClosed(this, uploadStatus);
-            }
+            onUploadClosed?.Invoke(this, uploadStatus);
         }
 
         private void frmSyncToECM_FormClosed(object sender, FormClosedEventArgs e)

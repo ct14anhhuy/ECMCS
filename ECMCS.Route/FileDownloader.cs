@@ -25,6 +25,7 @@ namespace ECMCS.Route
             var fileInfo = ExtractParamsFromUrl(_url, "[", "]");
             using (WebClient client = new WebClient())
             {
+                Console.WriteLine(fileInfo.Url);
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
@@ -34,8 +35,8 @@ namespace ECMCS.Route
 
         private FileDownloadDTO ExtractParamsFromUrl(string source, string start, string end)
         {
-            FileDownloadDTO fileInfo = new FileDownloadDTO();
             string[] extractedStr = source.Extract(start, end);
+            FileDownloadDTO fileInfo = new FileDownloadDTO();
             fileInfo.Id = int.Parse(extractedStr[0]);
             fileInfo.Url = extractedStr[1];
             fileInfo.FileName = Path.GetFileName(fileInfo.Url);

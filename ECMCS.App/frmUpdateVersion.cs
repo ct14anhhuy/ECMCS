@@ -68,12 +68,14 @@ namespace ECMCS.App
         private void UploadFile()
         {
             string uploadUrl = $"{SystemParams.API_URL}/FileHistory/UploadFile";
-            var fileUpload = new FileUploadDTO();
-            fileUpload.FileId = _fileInfo.Id;
-            fileUpload.FileName = _fileInfo.FileName;
-            fileUpload.ModifierUser = CheckModifier();
-            fileUpload.Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version;
-            fileUpload.FileData = File.ReadAllBytes(_fileInfo.FilePath);
+            var fileUpload = new FileUploadDTO
+            {
+                FileId = _fileInfo.Id,
+                FileName = _fileInfo.FileName,
+                ModifierUser = CheckModifier(),
+                Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version,
+                FileData = File.ReadAllBytes(_fileInfo.FilePath)
+            };
             fileUpload.Size = fileUpload.FileData.Length / 1024;
 
             var json = JsonConvert.SerializeObject(fileUpload);
@@ -124,10 +126,7 @@ namespace ECMCS.App
 
         private void UploadClosed(FileDownloadDTO fileInfo)
         {
-            if (onUploadClosed != null)
-            {
-                onUploadClosed(this, fileInfo);
-            }
+            onUploadClosed?.Invoke(this, fileInfo);
         }
     }
 }

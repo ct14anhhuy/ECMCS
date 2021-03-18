@@ -26,19 +26,25 @@ namespace ECMCS.Route
 
         private static void Main(string[] args)
         {
-            try
-            {
-                //ShowWindow(GetConsoleWindow(), SW_HIDE);
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                string encodedUrl = HttpUtility.UrlDecode(args[0]);
-                string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
-                RouteToAction(urlParams);
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            Console.ReadLine();
+            //try
+            //{
+            //    //ShowWindow(GetConsoleWindow(), SW_HIDE);
+            //    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            //    string encodedUrl = HttpUtility.UrlDecode(args[0]);
+            //    string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
+            //    RouteToAction(urlParams);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            //Console.ReadLine();
+
+            ShowWindow(GetConsoleWindow(), SW_HIDE);
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            string encodedUrl = HttpUtility.UrlDecode(args[0]);
+            string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
+            RouteToAction(urlParams);
         }
 
         /// <summary>
