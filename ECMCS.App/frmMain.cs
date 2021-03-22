@@ -15,7 +15,7 @@ namespace ECMCS.App
     {
         private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
-        private readonly string _routeAppPath = $@"{Directory.GetCurrentDirectory()}\ECMCS.Route.exe";
+        private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
         private int _fireCount = 0;

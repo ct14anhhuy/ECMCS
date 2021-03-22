@@ -1,4 +1,4 @@
-﻿//#define DEVELOPMENT
+﻿#define DEVELOPMENT
 
 namespace ECMCS.Utilities
 {
