@@ -72,20 +72,18 @@ namespace ECMCS.App
             {
                 FileId = _fileInfo.Id,
                 FileName = _fileInfo.FileName,
-                ModifierUser = CheckModifier(),
+                ModifierUser = GetModifier(),
                 Version = rdUpdateNextVersion.Checked ? txtNextVersion.Text : _fileInfo.Version,
                 FileData = File.ReadAllBytes(_fileInfo.FilePath)
             };
-            fileUpload.Size = fileUpload.FileData.Length / 1024;
-
             var json = JsonConvert.SerializeObject(fileUpload);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            var client = new EcmHttpClient(_fileInfo.Owner);
+            var client = new EcmHttpClient(epLiteId: _fileInfo.Owner);
             var response = client.PostAsync(uploadUrl, data).Result;
             _fileInfo.IsUploaded = response.IsSuccessStatusCode;
         }
 
-        private string CheckModifier()
+        private string GetModifier()
         {
             JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
             var json = jsonHelper.Get<object>().FirstOrDefault();

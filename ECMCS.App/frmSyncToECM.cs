@@ -154,7 +154,6 @@ namespace ECMCS.App
                 Tag = txtTag.Text,
                 FileData = File.ReadAllBytes(_fullPath)
             };
-
             var json = JsonConvert.SerializeObject(fileInfo);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var client = new EcmHttpClient(fileInfo.OwnerUser);

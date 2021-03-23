@@ -8,7 +8,6 @@ namespace ECMCS.DTO
         public string FileName { get; set; }
         public string ModifierUser { get; set; }
         public string Version { get; set; }
-        public int Size { get; set; }
         public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public byte[] FileData { get; set; }
     }

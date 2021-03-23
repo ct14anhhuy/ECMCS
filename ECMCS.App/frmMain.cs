@@ -58,7 +58,10 @@ namespace ECMCS.App
 
         private void OpenUpdateFrm(FileDownloadDTO fileDownload)
         {
-            var frm = new frmUpdateVersion();
+            var frm = new frmUpdateVersion
+            {
+                TopMost = true
+            };
             var delSendMsg = new SendMessenge<FileDownloadDTO>(frm.EventListener);
             delSendMsg(fileDownload);
             frm.OnUploadClosed += Frm_OnUploadClosed;
@@ -137,14 +140,27 @@ namespace ECMCS.App
             {
                 string subPath = Path.GetDirectoryName(e.FullPath);
                 var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                fileDownload.Modifier = _epLiteId;
-                if (fileDownload != null && !fileDownload.ReadOnly)
+                if (IsModifiedFile(fileDownload))
                 {
-                    fileDownload.IsDone = true;
-                    _jsonHelper.Update(fileDownload, x => x.FilePath == fileDownload.FilePath);
-                    OpenUpdateFrm(fileDownload);
+                    fileDownload.Modifier = _epLiteId;
+                    if (fileDownload != null && !fileDownload.ReadOnly)
+                    {
+                        fileDownload.IsDone = true;
+                        _jsonHelper.Update(fileDownload, x => x.FilePath == fileDownload.FilePath);
+                        OpenUpdateFrm(fileDownload);
+                    }
                 }
             }
+        }
+
+        private bool IsModifiedFile(FileDownloadDTO fileDownload)
+        {
+            int fileSize = File.ReadAllBytes(fileDownload.FilePath).Length;
+            if (fileSize != fileDownload.FileSize)
+            {
+                return true;
+            }
+            return false;
         }
 
         #endregion Monitor watcher
@@ -170,7 +186,10 @@ namespace ECMCS.App
             var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
             if (_extensions.Any(ext.Equals))
             {
-                frmSyncToECM frm = new frmSyncToECM();
+                frmSyncToECM frm = new frmSyncToECM
+                {
+                    TopMost = true
+                };
                 frm.OnUploadClosed += Frm_OnUploadClosedSync;
                 var delSendMsg = new SendMessenge<(string, string)>(frm.EventListener);
                 delSendMsg((e.FullPath, _epLiteId));

@@ -42,8 +42,8 @@ namespace ECMCS.Route
 
             ShowWindow(GetConsoleWindow(), SW_HIDE);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            string encodedUrl = HttpUtility.UrlDecode(args[0]);
-            string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
+            string decodedUrl = HttpUtility.UrlDecode(args[0]);
+            string urlParams = UrlHelper.Decode(decodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
             RouteToAction(urlParams);
         }
 
@@ -54,9 +54,10 @@ namespace ECMCS.Route
         /// <param name="e"></param>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            int exitCode = 1;
             ThreadContext.Properties["appName"] = "ECMCS.Route";
             LogHelper.Error((e.ExceptionObject as Exception).Message);
-            Environment.Exit(1);
+            Environment.Exit(exitCode);
         }
 
         private static void RouteToAction(string args)

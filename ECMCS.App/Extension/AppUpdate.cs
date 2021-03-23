@@ -18,9 +18,10 @@ namespace ECMCS.App.Extension
                     {
                         try
                         {
+                            int exitCode = 0;
                             app.Update();
                             Application.Restart();
-                            Environment.Exit(0);
+                            Environment.Exit(exitCode);
                         }
                         catch (DeploymentDownloadException ex)
                         {

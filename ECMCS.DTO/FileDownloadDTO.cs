@@ -15,5 +15,6 @@ namespace ECMCS.DTO
         public DateTime ModifiedDate { get; set; } = DateTime.Now;
         public bool IsDone { get; set; } = false;
         public bool IsUploaded { get; set; } = false;
+        public int FileSize { get; set; }
     }
 }
