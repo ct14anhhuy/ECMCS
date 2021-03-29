@@ -38,7 +38,7 @@ namespace ECMCS.App
 
         public void EventListener((string fullPath, string owner) fileInfo)
         {
-            txtFileName.Text = Path.GetFileName(fileInfo.fullPath);
+            txtFileName.Text = StringHelper.RemoveSharpCharacter(Path.GetFileName(fileInfo.fullPath));
             txtOwner.Text = fileInfo.owner;
             _fullPath = fileInfo.fullPath;
         }

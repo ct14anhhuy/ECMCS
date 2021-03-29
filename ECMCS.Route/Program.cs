@@ -108,14 +108,15 @@ namespace ECMCS.Route
             {
                 InitData(epLiteId);
                 string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
-                try
-                {
-                    Process.Start("chrome", baseUrl).Dispose();
-                }
-                catch
-                {
-                    Process.Start($"microsoft-edge:{baseUrl}").Dispose();
-                }
+                Process.Start("firefox", baseUrl).Dispose();
+                //try
+                //{
+                //    Process.Start("chrome", baseUrl).Dispose();
+                //}
+                //catch
+                //{
+                //    Process.Start($"microsoft-edge:{baseUrl}").Dispose();
+                //}
             }
         }
 

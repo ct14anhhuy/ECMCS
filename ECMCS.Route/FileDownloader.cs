@@ -28,7 +28,6 @@ namespace ECMCS.Route
                 Console.WriteLine(fileInfo.Url);
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
-                fileInfo.FileSize = File.ReadAllBytes(fileInfo.FilePath).Length;
                 FileHelper.OpenFile(fileInfo.FilePath);
                 _jsonHelper.Add(fileInfo);
             }
@@ -40,9 +39,9 @@ namespace ECMCS.Route
             FileDownloadDTO fileInfo = new FileDownloadDTO();
             fileInfo.Id = int.Parse(extractedStr[0]);
             fileInfo.Url = extractedStr[1];
-            fileInfo.FileName = Path.GetFileName(fileInfo.Url);
             fileInfo.Owner = extractedStr[2];
             fileInfo.Version = extractedStr[3];
+            fileInfo.FileName = Path.GetFileName(fileInfo.Url);
             fileInfo.ReadOnly = bool.Parse(extractedStr[4]);
             return fileInfo;
         }

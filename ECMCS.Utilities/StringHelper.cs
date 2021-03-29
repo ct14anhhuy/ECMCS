@@ -15,5 +15,22 @@ namespace ECMCS.Utilities
             }
             return str.ToArray();
         }
+
+        public static string RemoveSharpCharacter(string fileName)
+        {
+            fileName = fileName.Trim();
+            while (true)
+            {
+                if (fileName[0] == '#')
+                {
+                    fileName = fileName.Substring(1);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return fileName;
+        }
     }
 }

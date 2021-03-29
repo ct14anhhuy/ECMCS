@@ -11,12 +11,9 @@ namespace ECMCS.Utilities
             {
                 var regKey = Registry.CurrentUser.OpenSubKey("Software", true).OpenSubKey("Classes", true);
                 RegistryKey key = Registry.ClassesRoot.OpenSubKey(protocolName);
-                if (key == null)
-                {
-                    key = regKey.CreateSubKey(protocolName);
-                    key.SetValue("URL Protocol", protocolName);
-                    key.CreateSubKey(@"shell\open\command").SetValue("", "\"" + appPath + "\" \"%1\"");
-                }
+                key = regKey.CreateSubKey(protocolName);
+                key.SetValue("URL Protocol", protocolName);
+                key.CreateSubKey(@"shell\open\command").SetValue("", "\"" + appPath + "\" \"%1\"");
             }
             catch (Exception ex)
             {

@@ -115,5 +115,37 @@ namespace ECMCS.Utilities.FileFolderExtensions
                 }
             }
         }
+
+        public static bool IsFileLocked(string fileName)
+        {
+            FileStream fs = null;
+            try
+            {
+                fs = File.Open(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                try
+                {
+                    fs = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.None);
+                }
+                catch (Exception)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+            finally
+            {
+                if (fs != null)
+                {
+                    fs.Close();
+                }
+            }
+            return false;
+        }
     }
 }

@@ -1,8 +1,11 @@
-﻿using ECMCS.DTO;
+﻿using ECMCS.App.Tracking;
+using ECMCS.DTO;
 using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using Newtonsoft.Json;
 using System;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -11,14 +14,17 @@ namespace ECMCS.App
 {
     public delegate void SendMessenge<T>(T entity);
 
+    public delegate void TrackingFile(string fullPath);
+
     public partial class frmMain : Form
     {
-        private readonly string[] _extensions = { ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx" };
+        private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf", ".jpeg", ".jpg", ".png" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
         private int _fireCount = 0;
+        private ObservableCollection<FileChangeTracking> _queue;
 
         public frmMain()
         {
@@ -29,6 +35,20 @@ namespace ECMCS.App
             MonitorWatcher(_monitorPath);
             SyncWatcher(SystemParams.SYNC_FILE_PATH);
             _jsonHelper = new JsonHelper();
+
+            _queue = new ObservableCollection<FileChangeTracking>();
+            _queue.CollectionChanged += Events_CollectionChanged;
+        }
+
+        private void Events_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                foreach (var item in e.NewItems)
+                {
+                    (item as FileChangeTracking).StartFileProcessing();
+                }
+            }
         }
 
         private void CreateResources()
@@ -50,10 +70,11 @@ namespace ECMCS.App
 
         private void ShowBalloonTip(string title, string messenge, ToolTipIcon icon)
         {
+            int timeout = 1000;
             notifyIcon.BalloonTipIcon = icon;
             notifyIcon.BalloonTipTitle = title;
             notifyIcon.BalloonTipText = messenge;
-            notifyIcon.ShowBalloonTip(1000);
+            notifyIcon.ShowBalloonTip(timeout);
         }
 
         private void OpenUpdateFrm(FileDownloadDTO fileDownload)
@@ -108,8 +129,21 @@ namespace ECMCS.App
                 IncludeSubdirectories = true,
                 SynchronizingObject = this
             };
-            monitorWatcher.Deleted += MonitorWatcher_Deleted;
+            monitorWatcher.Created += MonitorWatcher_Created;
             monitorWatcher.Changed += MonitorWatcher_Changed;
+        }
+
+        private void MonitorWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            if (_fileTrackingExtensions.Any(ext.Equals))
+            {
+                if (!Path.GetFileName(e.FullPath).Contains("~$"))
+                {
+                    FileChangeTracking fileCreate = new FileChangeTracking(this, e.FullPath);
+                    _queue.Add(fileCreate);
+                }
+            }
         }
 
         private void MonitorWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -133,12 +167,12 @@ namespace ECMCS.App
             }
         }
 
-        private void MonitorWatcher_Deleted(object sender, FileSystemEventArgs e)
+        public void FileClosed(string fullPath)
         {
-            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (_extensions.Any(ext.Equals))
+            var ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLower();
+            if (_fileTrackingExtensions.Any(ext.Equals))
             {
-                string subPath = Path.GetDirectoryName(e.FullPath);
+                string subPath = Path.GetDirectoryName(fullPath);
                 var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
                 if (IsModifiedFile(fileDownload))
                 {
@@ -155,8 +189,9 @@ namespace ECMCS.App
 
         private bool IsModifiedFile(FileDownloadDTO fileDownload)
         {
-            int fileSize = File.ReadAllBytes(fileDownload.FilePath).Length;
-            if (fileSize != fileDownload.FileSize)
+            DateTime creation = File.GetCreationTime(fileDownload.FilePath);
+            DateTime modification = File.GetLastWriteTime(fileDownload.FilePath);
+            if ((modification - creation).TotalSeconds > 1)
             {
                 return true;
             }
@@ -184,7 +219,7 @@ namespace ECMCS.App
         private void SyncWatcher_Created(object sender, FileSystemEventArgs e)
         {
             var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (_extensions.Any(ext.Equals))
+            if (_fileTrackingExtensions.Any(ext.Equals))
             {
                 frmSyncToECM frm = new frmSyncToECM
                 {
