@@ -18,7 +18,7 @@ namespace ECMCS.App
 
     public partial class frmMain : Form
     {
-        private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf", ".jpeg", ".jpg", ".png" };
+        private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;
@@ -54,7 +54,7 @@ namespace ECMCS.App
         private void CreateResources()
         {
             FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
-            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), false);
+            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
             FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
             FileHelper.CreatePath(SystemParams.SYNC_FILE_PATH);
@@ -174,7 +174,7 @@ namespace ECMCS.App
             {
                 string subPath = Path.GetDirectoryName(fullPath);
                 var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                if (IsModifiedFile(fileDownload))
+                if (IsModifiedFile(fileDownload.FilePath))
                 {
                     fileDownload.Modifier = _epLiteId;
                     if (fileDownload != null && !fileDownload.ReadOnly)
@@ -187,10 +187,10 @@ namespace ECMCS.App
             }
         }
 
-        private bool IsModifiedFile(FileDownloadDTO fileDownload)
+        private bool IsModifiedFile(string filePath)
         {
-            DateTime creation = File.GetCreationTime(fileDownload.FilePath);
-            DateTime modification = File.GetLastWriteTime(fileDownload.FilePath);
+            DateTime creation = File.GetCreationTime(filePath);
+            DateTime modification = File.GetLastWriteTime(filePath);
             if ((modification - creation).TotalSeconds > 1)
             {
                 return true;

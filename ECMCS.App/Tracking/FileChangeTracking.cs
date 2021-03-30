@@ -6,9 +6,9 @@ namespace ECMCS.App.Tracking
 {
     public class FileChangeTracking
     {
+        private const int TRACKING_INTERVAL = 3000;
         private readonly string _filePath;
         private readonly frmMain _sender;
-        private const int TRACKING_INTERVAL = 3000;
         private Timer _processTimer;
 
         public FileChangeTracking(frmMain sender, string filePath)
@@ -23,7 +23,7 @@ namespace ECMCS.App.Tracking
             {
                 _processTimer = new Timer();
                 _processTimer.Interval = TRACKING_INTERVAL;
-                _processTimer.Tick += new EventHandler(processTimer_Elapsed);
+                _processTimer.Tick += _processTimer_Tick;
                 _processTimer.Enabled = true;
                 _processTimer.Start();
             }
@@ -33,22 +33,21 @@ namespace ECMCS.App.Tracking
             }
         }
 
-        private void ProcessFile()
-        {
-            var trackingFile = new TrackingFile(_sender.FileClosed);
-            trackingFile(_filePath);
-        }
-
-        private void processTimer_Elapsed(object sender, EventArgs e)
+        private void _processTimer_Tick(object sender, EventArgs e)
         {
             if (!FileHelper.IsFileLocked(_filePath))
             {
                 _processTimer.Enabled = false;
                 _processTimer.Stop();
                 _processTimer.Dispose();
-
                 ProcessFile();
             }
+        }
+
+        private void ProcessFile()
+        {
+            var trackingFile = new TrackingFile(_sender.FileClosed);
+            trackingFile(_filePath);
         }
     }
 }
