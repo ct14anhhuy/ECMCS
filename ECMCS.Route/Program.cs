@@ -30,9 +30,7 @@ namespace ECMCS.Route
             //{
             //    //ShowWindow(GetConsoleWindow(), SW_HIDE);
             //    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            //    string encodedUrl = HttpUtility.UrlDecode(args[0]);
-            //    string urlParams = UrlHelper.Decode(encodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
-            //    RouteToAction(urlParams);
+            //    RouteToAction(args[0]);
             //}
             //catch (Exception ex)
             //{
@@ -42,9 +40,7 @@ namespace ECMCS.Route
 
             ShowWindow(GetConsoleWindow(), SW_HIDE);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            string decodedUrl = HttpUtility.UrlDecode(args[0]);
-            string urlParams = UrlHelper.Decode(decodedUrl.Substring(args[0].IndexOf(':') + 1)).Trim().Replace(" ", "+");
-            RouteToAction(urlParams);
+            RouteToAction(args[0]);
         }
 
         /// <summary>
@@ -86,7 +82,10 @@ namespace ECMCS.Route
             {
                 return;
             }
-            FileDownloader downloader = new FileDownloader(args);
+            args = args.Substring(args.LastIndexOf('>') + 1);
+            args = Encryptor.Decrypt(args);
+            string decodedUrl = HttpUtility.UrlDecode(args);
+            FileDownloader downloader = new FileDownloader(decodedUrl);
             downloader.Download();
         }
 

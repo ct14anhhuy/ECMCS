@@ -7,7 +7,7 @@ namespace ECMCS.Utilities
 {
     public static class Encryptor
     {
-        private const string SECRET_KEY = "25bbchL2xYEEuDcz0ApK";
+        private const string SECRET_KEY = @"?(_qV~{SIASSUzm)x1mQ*d`s00@.-35TQh9PNX9Q+!@^YrL,`dVEt.qp_)r|Kv'";
 
         public static string Encrypt(string plainText)
         {

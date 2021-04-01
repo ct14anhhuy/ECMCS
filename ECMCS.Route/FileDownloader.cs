@@ -15,6 +15,7 @@ namespace ECMCS.Route
 
         public FileDownloader(string url)
         {
+            Console.WriteLine(url);
             _url = url;
             _jsonHelper = new JsonHelper();
         }
@@ -22,7 +23,7 @@ namespace ECMCS.Route
         public void Download()
         {
             string subPath = $@"ECM{DateTime.Now:ddMMyyyyHHmmssfff}\";
-            var fileInfo = ExtractParamsFromUrl(_url, "[", "]");
+            var fileInfo = ExtractParamsFromUrl(_url, "</", "/>");
             using (WebClient client = new WebClient())
             {
                 Console.WriteLine(fileInfo.Url);

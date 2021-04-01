@@ -24,7 +24,7 @@ namespace ECMCS.Utilities
 
         public static string Decode(string str)
         {
-            return Regex.Replace(str.Replace('+', ' '), "%[0-9a-zA-Z고객센터][0-9a-zA-Z고객센터]", new MatchEvaluator(DecodeEvaluator));
+            return Regex.Replace(str, "%[0-9a-zA-Z고객센터][0-9a-zA-Z고객센터]", new MatchEvaluator(DecodeEvaluator));
         }
     }
 }
