@@ -24,6 +24,9 @@ namespace ECMCS.Route
 
         private const int SW_HIDE = 0;
 
+        private static MessageProvider _messageProvider;
+        private static FileDownloader _fileDownloader;
+
         private static void Main(string[] args)
         {
             //try
@@ -37,6 +40,9 @@ namespace ECMCS.Route
             //    Console.WriteLine(ex.Message);
             //}
             //Console.ReadLine();
+
+            _messageProvider = new MessageProvider("ECMCS");
+            _fileDownloader = new FileDownloader();
 
             ShowWindow(GetConsoleWindow(), SW_HIDE);
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -71,6 +77,10 @@ namespace ECMCS.Route
                     RedirectAction(epLiteId);
                     break;
 
+                case "FileShareUrl":
+                    _messageProvider.Send(args);
+                    break;
+
                 default:
                     break;
             }
@@ -85,8 +95,7 @@ namespace ECMCS.Route
             args = args.Substring(args.LastIndexOf('>') + 1);
             args = Encryptor.Decrypt(args);
             string decodedUrl = HttpUtility.UrlDecode(args);
-            FileDownloader downloader = new FileDownloader(decodedUrl);
-            downloader.Download();
+            _fileDownloader.Download(decodedUrl);
         }
 
         private static void RedirectAction(string epLiteId)
@@ -105,17 +114,9 @@ namespace ECMCS.Route
             string accessToken = GetToken(epLiteId);
             if (!string.IsNullOrEmpty(accessToken))
             {
-                InitData(epLiteId);
+                SaveUserLogin(epLiteId);
                 string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
                 Process.Start("firefox", baseUrl).Dispose();
-                //try
-                //{
-                //    Process.Start("chrome", baseUrl).Dispose();
-                //}
-                //catch
-                //{
-                //    Process.Start($"microsoft-edge:{baseUrl}").Dispose();
-                //}
             }
         }
 
@@ -133,7 +134,7 @@ namespace ECMCS.Route
             return string.Empty;
         }
 
-        private static void InitData(string epLiteId)
+        private static void SaveUserLogin(string epLiteId)
         {
             JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
             var emp = new { epLiteId };

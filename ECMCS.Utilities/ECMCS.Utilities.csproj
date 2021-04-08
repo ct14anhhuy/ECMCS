@@ -58,6 +58,7 @@
     <Compile Include="FileFolderExtensions\JsonHelper.cs" />
     <Compile Include="FileFolderExtensions\LogHelper.cs" />
     <Compile Include="MemoryManagement.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="ProtocolHelper.cs" />

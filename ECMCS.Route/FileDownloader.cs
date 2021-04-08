@@ -11,22 +11,18 @@ namespace ECMCS.Route
     {
         private readonly string _path = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly JsonHelper _jsonHelper;
-        private readonly string _url;
 
-        public FileDownloader(string url)
+        public FileDownloader()
         {
-            Console.WriteLine(url);
-            _url = url;
             _jsonHelper = new JsonHelper();
         }
 
-        public void Download()
+        public void Download(string url)
         {
             string subPath = $@"ECM{DateTime.Now:ddMMyyyyHHmmssfff}\";
-            var fileInfo = ExtractParamsFromUrl(_url, "</", "/>");
+            var fileInfo = ExtractParamsFromUrl(url, "</", "/>");
             using (WebClient client = new WebClient())
             {
-                Console.WriteLine(fileInfo.Url);
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
@@ -37,13 +33,15 @@ namespace ECMCS.Route
         private FileDownloadDTO ExtractParamsFromUrl(string source, string start, string end)
         {
             string[] extractedStr = source.Extract(start, end);
-            FileDownloadDTO fileInfo = new FileDownloadDTO();
-            fileInfo.Id = int.Parse(extractedStr[0]);
-            fileInfo.Url = extractedStr[1];
-            fileInfo.Owner = extractedStr[2];
-            fileInfo.Version = extractedStr[3];
+            FileDownloadDTO fileInfo = new FileDownloadDTO
+            {
+                Id = int.Parse(extractedStr[0]),
+                Url = extractedStr[1],
+                Owner = extractedStr[2],
+                Version = extractedStr[3],
+                ReadOnly = bool.Parse(extractedStr[4])
+            };
             fileInfo.FileName = Path.GetFileName(fileInfo.Url);
-            fileInfo.ReadOnly = bool.Parse(extractedStr[4]);
             return fileInfo;
         }
     }

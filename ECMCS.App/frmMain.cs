@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace ECMCS.App
@@ -21,10 +22,10 @@ namespace ECMCS.App
         private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
+        private readonly ObservableCollection<FileChangeTracking> _queue;
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
         private int _fireCount = 0;
-        private ObservableCollection<FileChangeTracking> _queue;
 
         public frmMain()
         {
@@ -35,6 +36,7 @@ namespace ECMCS.App
             MonitorWatcher(_monitorPath);
             SyncWatcher(SystemParams.SYNC_FILE_PATH);
             _jsonHelper = new JsonHelper();
+            _epLiteId = GetCurrentUser();
 
             _queue = new ObservableCollection<FileChangeTracking>();
             _queue.CollectionChanged += Events_CollectionChanged;
@@ -54,7 +56,7 @@ namespace ECMCS.App
         private void CreateResources()
         {
             FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
-            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
+            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), false);
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
             FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
             FileHelper.CreatePath(SystemParams.SYNC_FILE_PATH);
@@ -153,18 +155,23 @@ namespace ECMCS.App
             {
                 if (e.Name == SystemParams.JSON_USERS)
                 {
-                    JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
-                    var json = jsonHelper.Get<object>().FirstOrDefault();
-                    var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
-                    _epLiteId = emp.epLiteId;
-                    ShowBalloonTip("Login Success", "Current user: " + emp.epLiteId, ToolTipIcon.Info);
-                    LogHelper.Info("Logged on: " + emp.epLiteId);
+                    _epLiteId = GetCurrentUser();
+                    ShowBalloonTip("Login Success", "Current user: " + _epLiteId, ToolTipIcon.Info);
+                    LogHelper.Info("Logged on: " + _epLiteId);
                 }
             }
             else
             {
                 _fireCount = 0;
             }
+        }
+
+        private string GetCurrentUser()
+        {
+            JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
+            var json = jsonHelper.Get<object>().FirstOrDefault();
+            var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+            return emp.epLiteId;
         }
 
         public void FileClosed(string fullPath)
@@ -245,5 +252,43 @@ namespace ECMCS.App
         }
 
         #endregion Sync watcher
+
+        protected override void WndProc(ref Message message)
+        {
+            if (message.Msg == NativeMethods.WM_COPYDATA)
+            {
+                NativeMethods.COPYDATASTRUCT copyData = (NativeMethods.COPYDATASTRUCT)Marshal.PtrToStructure(message.LParam, typeof(NativeMethods.COPYDATASTRUCT));
+                int dataType = (int)copyData.dwData;
+                if (dataType == 2)
+                {
+                    string data = Marshal.PtrToStringAnsi(copyData.lpData);
+                    string action = data.Extract("<", ">")[0];
+
+                    switch (action)
+                    {
+                        case "FileShareUrl":
+                            data = data.Substring(data.LastIndexOf('>') + 1);
+                            data = Encryptor.Decrypt(data);
+                            data = data.Extract("</", "/>")[0];
+                            frmDownloadFileShare frm = new frmDownloadFileShare();
+                            var delSendMsg = new SendMessenge<(string, int)>(frm.EventListener);
+                            delSendMsg((_epLiteId, int.Parse(data)));
+                            frm.Show();
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    throw new Exception(string.Format("Unrecognized data type = {0}.", dataType));
+                }
+            }
+            else
+            {
+                base.WndProc(ref message);
+            }
+        }
     }
 }
