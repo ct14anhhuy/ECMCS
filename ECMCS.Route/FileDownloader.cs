@@ -24,9 +24,9 @@ namespace ECMCS.Route
             using (WebClient client = new WebClient())
             {
                 fileInfo.FilePath = FileHelper.CreatePath(_path, subPath) + Path.GetFileName(fileInfo.Url);
+                _jsonHelper.Add(fileInfo);
                 client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
-                _jsonHelper.Add(fileInfo);
             }
         }
 

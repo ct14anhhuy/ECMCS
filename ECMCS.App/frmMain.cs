@@ -169,9 +169,13 @@ namespace ECMCS.App
         private string GetCurrentUser()
         {
             JsonHelper jsonHelper = new JsonHelper(CommonConstants.USER_FILE);
-            var json = jsonHelper.Get<object>().FirstOrDefault();
-            var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
-            return emp.epLiteId;
+            if (jsonHelper.Get<object>() != null)
+            {
+                var json = jsonHelper.Get<object>().FirstOrDefault();
+                var emp = JsonConvert.DeserializeAnonymousType(json.ToString(), new { epLiteId = "" });
+                return emp.epLiteId;
+            }
+            return null;
         }
 
         public void FileClosed(string fullPath)

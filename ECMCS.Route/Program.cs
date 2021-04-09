@@ -73,7 +73,7 @@ namespace ECMCS.Route
                     break;
 
                 case "Redirect":
-                    string epLiteId = ReadDRMLog();
+                    string epLiteId = GetUserFromDRMLog();
                     RedirectAction(epLiteId);
                     break;
 
@@ -153,15 +153,15 @@ namespace ECMCS.Route
             }
         }
 
-        private static string ReadDRMLog()
+        private static string GetUserFromDRMLog()
         {
             string currentUser = "";
             string drmLogFile = Environment.Is64BitOperatingSystem ? SystemParams.DRM_LOG_FILE_X64 : SystemParams.DRM_LOG_FILE_X32;
             foreach (var line in File.ReadLines(drmLogFile).Reverse())
             {
-                if (line.Contains("UserID"))
+                if (line.Contains("UserID") && line.Contains("DomainID = 0000000000012514"))
                 {
-                    if (CheckLoggedIn(line))
+                    if (line.Contains("UserID = (null)") || line.Contains("InitInstance"))
                     {
                         throw new Exception("You are not logged in");
                     }
@@ -170,11 +170,6 @@ namespace ECMCS.Route
                 }
             }
             return currentUser;
-        }
-
-        private static bool CheckLoggedIn(string line)
-        {
-            return line.Contains("UserID = (null)") || line.Contains("InitInstance");
         }
     }
 }
