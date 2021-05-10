@@ -137,7 +137,7 @@ namespace ECMCS.App
 
         private void MonitorWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            string ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
             if (_fileTrackingExtensions.Any(ext.Equals))
             {
                 if (!Path.GetFileName(e.FullPath).Contains("~$"))
@@ -180,7 +180,7 @@ namespace ECMCS.App
 
         public void FileClosed(string fullPath)
         {
-            var ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLower();
+            string ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLower();
             if (_fileTrackingExtensions.Any(ext.Equals))
             {
                 string subPath = Path.GetDirectoryName(fullPath);
@@ -229,7 +229,7 @@ namespace ECMCS.App
 
         private void SyncWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            var ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            string ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
             if (_fileTrackingExtensions.Any(ext.Equals))
             {
                 frmSyncToECM frm = new frmSyncToECM

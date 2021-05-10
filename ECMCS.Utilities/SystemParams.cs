@@ -16,6 +16,7 @@ namespace ECMCS.Utilities
         public const string PROTOCOL_NAME = "ECMProtocol";
         public const string API_URL = "https://localhost:44372/api";
         public const string WEB_URL = "https://localhost:44372";
+        //public const string WEB_URL = "http://localhost:3000";
 #else
         public const string FILE_PATH_ROOT = @"C:\FileCS\";
         public const string FILE_PATH_MONITOR = @"Monitor\";

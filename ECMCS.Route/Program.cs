@@ -117,6 +117,17 @@ namespace ECMCS.Route
                 SaveUserLogin(epLiteId);
                 string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
                 Process.Start("firefox", baseUrl).Dispose();
+
+                //string baseUrl = SystemParams.WEB_URL + "/Redirect/" + accessToken;
+
+                //if (Debugger.IsAttached)
+                //{
+                //    Process.Start("firefox", baseUrl).Dispose();
+                //}
+                //else
+                //{
+                //    Process.Start("chrome", baseUrl).Dispose();
+                //}
             }
         }
 

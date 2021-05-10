@@ -11,6 +11,7 @@ namespace ECMCS.App.Models
         public int Size { get; set; }
         public string SecurityLevel { get; set; }
         public string Version { get; set; }
+        public string Tag { get; set; }
         public DateTime? CreatedDate { get; set; }
         public DateTime? ModifiedDate { get; set; }
         public bool IsFavorite { get; set; }
