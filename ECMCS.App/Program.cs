@@ -28,7 +28,7 @@ namespace ECMCS.App
                 return;
             }
 
-            AppUpdate.CheckUpdate();
+            AppUpdate.InstallUpdateSyncWithInfo();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new frmMain());

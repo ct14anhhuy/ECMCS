@@ -102,32 +102,20 @@ namespace ECMCS.Route
         {
             if (Process.GetProcessesByName("ECMCS.App").Length == 0)
             {
-                if (Debugger.IsAttached)
-                {
-                    Process.Start(Assembly.GetExecutingAssembly().Location).Dispose();
-                }
-                else
-                {
-                    Process.Start($@"{Path.GetDirectoryName(Assembly.GetAssembly(typeof(Program)).CodeBase)}\ECMCS.App.exe").Dispose();
-                }
+                string path = Env.IS_DEVELOPMENT ? Assembly.GetExecutingAssembly().Location : Environment.ExpandEnvironmentVariables(@"%AppData%\Microsoft\Windows\Start Menu\Programs\Posco VST\ECM.appref-ms");
+                Process.Start(path).Dispose();
             }
             string accessToken = GetToken(epLiteId);
             if (!string.IsNullOrEmpty(accessToken))
             {
                 SaveUserLogin(epLiteId);
-                string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
-                Process.Start("firefox", baseUrl).Dispose();
+                string browser = Env.IS_DEVELOPMENT ? "chrome" : "firefox";
 
+                //string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
                 //string baseUrl = SystemParams.WEB_URL + "/Redirect/" + accessToken;
 
-                //if (Debugger.IsAttached)
-                //{
-                //    Process.Start("firefox", baseUrl).Dispose();
-                //}
-                //else
-                //{
-                //    Process.Start("chrome", baseUrl).Dispose();
-                //}
+                string baseUrl = Env.IS_DEVELOPMENT ? SystemParams.WEB_URL + "/Redirect/" + accessToken : SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
+                Process.Start(browser, baseUrl).Dispose();
             }
         }
 

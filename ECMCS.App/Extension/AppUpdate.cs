@@ -6,32 +6,67 @@ namespace ECMCS.App.Extension
 {
     public static class AppUpdate
     {
-        public static void CheckUpdate()
+        public static void InstallUpdateSyncWithInfo()
         {
             if (ApplicationDeployment.IsNetworkDeployed)
             {
-                ApplicationDeployment app = ApplicationDeployment.CurrentDeployment;
-                if (app.CheckForUpdate())
+                ApplicationDeployment ad = ApplicationDeployment.CurrentDeployment;
+
+                UpdateCheckInfo info;
+                try
                 {
-                    DialogResult dr = MessageBox.Show("Current version is not the latest version, press Yes button to update", "Update Version", MessageBoxButtons.OKCancel);
-                    if (dr == DialogResult.OK)
+                    info = ad.CheckForDetailedUpdate();
+                }
+                catch (DeploymentDownloadException dde)
+                {
+                    MessageBox.Show("The new version of the application cannot be downloaded at this time. \n\nPlease check your network connection, or try again later. Error: " + dde.Message);
+                    return;
+                }
+                catch (InvalidDeploymentException ide)
+                {
+                    MessageBox.Show("Cannot check for a new version of the application. The ClickOnce deployment is corrupt. Please redeploy the application and try again. Error: " + ide.Message);
+                    return;
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    MessageBox.Show("This application cannot be updated. It is likely not a ClickOnce application. Error: " + ioe.Message);
+                    return;
+                }
+
+                if (info.UpdateAvailable)
+                {
+                    bool doUpdate = true;
+                    if (!info.IsUpdateRequired)
                     {
-                        try
+                        DialogResult dr = MessageBox.Show("An update is available. Would you like to update the application now?", "Update Available", MessageBoxButtons.OKCancel);
+                        if (!(DialogResult.OK == dr))
                         {
-                            int exitCode = 0;
-                            app.Update();
-                            Application.Restart();
-                            Environment.Exit(exitCode);
-                        }
-                        catch (DeploymentDownloadException ex)
-                        {
-                            MessageBox.Show($"Could not update to the latest version, check the connection and try again {Environment.NewLine}{ex.Message}", "Update Failed");
-                            return;
+                            doUpdate = false;
+                        
                         }
                     }
                     else
                     {
-                        Application.ExitThread();
+                        MessageBox.Show("This application has detected a mandatory update from your current " +
+                            "version to version " + info.MinimumRequiredVersion.ToString() +
+                            ". The application will now install the update and restart.",
+                            "Update Available", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                    }
+
+                    if (doUpdate)
+                    {
+                        try
+                        {
+                            ad.Update();
+                            MessageBox.Show("The application has been upgraded, and will now restart.");
+                            Application.Restart();
+                        }
+                        catch (DeploymentDownloadException dde)
+                        {
+                            MessageBox.Show("Cannot install the latest version of the application. \n\nPlease check your network connection, or try again later. Error: " + dde);
+                            return;
+                        }
                     }
                 }
             }
