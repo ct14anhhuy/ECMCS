@@ -29,18 +29,6 @@ namespace ECMCS.Route
 
         private static void Main(string[] args)
         {
-            //try
-            //{
-            //    //ShowWindow(GetConsoleWindow(), SW_HIDE);
-            //    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            //    RouteToAction(args[0]);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            //Console.ReadLine();
-
             _messageProvider = new MessageProvider("ECMCS");
             _fileDownloader = new FileDownloader();
 
@@ -112,8 +100,6 @@ namespace ECMCS.Route
                 string browser = Env.IS_DEVELOPMENT ? "chrome" : "firefox";
 
                 //string baseUrl = SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
-                //string baseUrl = SystemParams.WEB_URL + "/Redirect/" + accessToken;
-
                 string baseUrl = Env.IS_DEVELOPMENT ? SystemParams.WEB_URL + "/Redirect/" + accessToken : SystemParams.WEB_URL + "/AuthGate?token=" + accessToken;
                 Process.Start(browser, baseUrl).Dispose();
             }

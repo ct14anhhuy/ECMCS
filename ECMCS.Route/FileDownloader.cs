@@ -35,7 +35,7 @@ namespace ECMCS.Route
             string[] extractedStr = source.Extract(start, end);
             FileDownloadDTO fileInfo = new FileDownloadDTO
             {
-                Id = int.Parse(extractedStr[0]),
+                Id = Guid.Parse(extractedStr[0]),
                 Url = extractedStr[1],
                 Owner = extractedStr[2],
                 Version = extractedStr[3],

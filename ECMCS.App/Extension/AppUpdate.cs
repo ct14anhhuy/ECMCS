@@ -42,7 +42,6 @@ namespace ECMCS.App.Extension
                         if (!(DialogResult.OK == dr))
                         {
                             doUpdate = false;
-                        
                         }
                     }
                     else

@@ -4,7 +4,7 @@ namespace ECMCS.DTO
 {
     public class FileUploadDTO
     {
-        public int FileId { get; set; }
+        public Guid FileId { get; set; }
         public string FileName { get; set; }
         public string ModifierUser { get; set; }
         public string Version { get; set; }
