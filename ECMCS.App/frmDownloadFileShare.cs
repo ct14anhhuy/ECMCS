@@ -17,14 +17,14 @@ namespace ECMCS.App
             InitializeComponent();
         }
 
-        public void EventListener((string epLiteId, int fileId) data)
+        public void EventListener((string epLiteId, Guid fileId) data)
         {
             _httpClient = new EcmHttpClient(data.epLiteId);
             GetFileInfo(data.fileId);
             GetFileShareUrl(data.fileId);
         }
 
-        private async void GetFileShareUrl(int fileId)
+        private async void GetFileShareUrl(Guid fileId)
         {
             _fileUrls = new string[3];
             string url = $"{SystemParams.API_URL}/FileInfo/GetFileUrl?id={fileId}&isShareUrl=true";
@@ -34,11 +34,15 @@ namespace ECMCS.App
                 var resData = await response.Content.ReadAsStringAsync();
                 _fileUrls = JsonConvert.DeserializeObject<string[]>(resData);
                 _fileUrls[0] = "ECMProtocol: " + _fileUrls[0];
-                _fileUrls[1] = "ECMProtocol: " + _fileUrls[1];
+                _fileUrls[1] = _fileUrls[1] != null ? "ECMProtocol: " + _fileUrls[1] : null;
+                if (_fileUrls[1] == null)
+                {
+                    btnEdit.Enabled = false;
+                }
             }
         }
 
-        private async void GetFileInfo(int fileId)
+        private async void GetFileInfo(Guid fileId)
         {
             string url = $"{SystemParams.API_URL}/FileInfo/GetFileInfo?id=" + fileId;
             var response = await _httpClient.GetAsync(url);

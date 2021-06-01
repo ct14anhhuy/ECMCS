@@ -275,8 +275,8 @@ namespace ECMCS.App
                             data = Encryptor.Decrypt(data);
                             data = data.Extract("</", "/>")[0];
                             frmDownloadFileShare frm = new frmDownloadFileShare();
-                            var delSendMsg = new SendMessenge<(string, int)>(frm.EventListener);
-                            delSendMsg((_epLiteId, int.Parse(data)));
+                            var delSendMsg = new SendMessenge<(string, Guid)>(frm.EventListener);
+                            delSendMsg((_epLiteId, Guid.Parse(data)));
                             frm.Show();
                             break;
 

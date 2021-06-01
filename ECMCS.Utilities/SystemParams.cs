@@ -11,8 +11,7 @@
         public const string JSON_FILES = "data.json";
         public const string JSON_USERS = "users.json";
         public const string PROTOCOL_NAME = "ECMProtocol";
-        public const string API_URL = Env.IS_DEVELOPMENT ? "https://localhost:44372/api" : "http://172.25.216.127:8081/api";
-        //public const string WEB_URL = Env.IS_DEVELOPMENT ? "https://localhost:44372" : "http://172.25.216.127:8081";
+        public const string API_URL = Env.IS_DEVELOPMENT ? "https://localhost:44372/api" : "http://172.25.216.127:8082/api";
         public const string WEB_URL = Env.IS_DEVELOPMENT ? "http://localhost:3000" : "http://172.25.216.127:8081";
     }
 }
