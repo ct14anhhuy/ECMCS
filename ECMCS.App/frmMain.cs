@@ -56,7 +56,7 @@ namespace ECMCS.App
         private void CreateResources()
         {
             FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
-            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), false);
+            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
             FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
             FileHelper.CreatePath(SystemParams.SYNC_FILE_PATH);
