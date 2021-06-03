@@ -58,6 +58,7 @@ namespace ECMCS.App
             FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
             FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
+            FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_LOG}", daysKeep: -3);
             FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
             FileHelper.CreatePath(SystemParams.SYNC_FILE_PATH);
             CreateFolderIcon(SystemParams.SYNC_FILE_PATH);
@@ -70,12 +71,12 @@ namespace ECMCS.App
             folderIcon.CreateFolderIcon(iconPath, "Sync To ECM");
         }
 
-        private void ShowBalloonTip(string title, string messenge, ToolTipIcon icon)
+        private void ShowBalloonTip(string title, string message, ToolTipIcon icon)
         {
             int timeout = 1000;
             notifyIcon.BalloonTipIcon = icon;
             notifyIcon.BalloonTipTitle = title;
-            notifyIcon.BalloonTipText = messenge;
+            notifyIcon.BalloonTipText = message;
             notifyIcon.ShowBalloonTip(timeout);
         }
 

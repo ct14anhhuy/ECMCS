@@ -116,6 +116,24 @@ namespace ECMCS.Utilities.FileFolderExtensions
             }
         }
 
+        public static void Empty(string path, int daysKeep)
+        {
+            DirectoryInfo directory = new DirectoryInfo(path);
+            foreach (FileInfo file in directory.EnumerateFiles())
+            {
+                if (file.LastWriteTime < DateTime.Today.AddDays(daysKeep))
+                {
+                    file.Delete();
+                }
+            }
+            foreach (DirectoryInfo dir in directory.EnumerateDirectories())
+            {
+                if (dir.LastWriteTime < DateTime.Today.AddDays(daysKeep))
+                {
+                    dir.Delete(true);
+                }
+            }
+        }
         public static bool IsFileLocked(string fileName)
         {
             FileStream fs = null;
