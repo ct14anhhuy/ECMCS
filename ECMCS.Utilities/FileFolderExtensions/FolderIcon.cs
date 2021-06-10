@@ -4,8 +4,8 @@ namespace ECMCS.Utilities.FileFolderExtensions
 {
     public class FolderIcon
     {
-        private string _folderPath = "";
-        private string _iniPath = "";
+        private string folderPath = "";
+        private string iniPath = "";
 
         public FolderIcon(string folderPath)
         {
@@ -30,21 +30,21 @@ namespace ECMCS.Utilities.FileFolderExtensions
 
         public string FolderPath
         {
-            get { return _folderPath; }
+            get { return folderPath; }
             set
             {
-                _folderPath = value;
-                if (!_folderPath.EndsWith("\\"))
+                folderPath = value;
+                if (!folderPath.EndsWith("\\"))
                 {
-                    _folderPath += "\\";
+                    folderPath += "\\";
                 }
             }
         }
 
         public string IniPath
         {
-            get { return _iniPath; }
-            set { _iniPath = value; }
+            get { return iniPath; }
+            set { iniPath = value; }
         }
 
         private bool CreateFolder()
