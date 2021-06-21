@@ -134,6 +134,7 @@ namespace ECMCS.Utilities.FileFolderExtensions
                 }
             }
         }
+
         public static bool IsFileLocked(string fileName)
         {
             FileStream fs = null;

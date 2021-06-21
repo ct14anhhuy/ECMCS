@@ -4,8 +4,6 @@ using ECMCS.Utilities;
 using ECMCS.Utilities.FileFolderExtensions;
 using Newtonsoft.Json;
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -22,7 +20,6 @@ namespace ECMCS.App
         private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
-        private readonly ObservableCollection<FileChangeTracking> _queue;
         private readonly JsonHelper _jsonHelper;
         private string _epLiteId;
         private int _fireCount = 0;
@@ -37,26 +34,12 @@ namespace ECMCS.App
             SyncWatcher(SystemParams.SYNC_FILE_PATH);
             _jsonHelper = new JsonHelper();
             _epLiteId = GetCurrentUser();
-
-            _queue = new ObservableCollection<FileChangeTracking>();
-            _queue.CollectionChanged += Events_CollectionChanged;
-        }
-
-        private void Events_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (var item in e.NewItems)
-                {
-                    (item as FileChangeTracking).StartFileProcessing();
-                }
-            }
         }
 
         private void CreateResources()
         {
             FileHelper.CreatePath(SystemParams.FILE_PATH_ROOT, SystemParams.FILE_PATH_MONITOR, SystemParams.FILE_PATH_LOG);
-            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), true);
+            FileHelper.SetHiddenFolder(SystemParams.FILE_PATH_ROOT.TrimEnd('\\'), SystemParams.HIDDEN_FOLDER);
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}");
             FileHelper.Empty($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_LOG}", daysKeep: -3);
             FileHelper.CreateFile($"{SystemParams.FILE_PATH_ROOT}{SystemParams.FILE_PATH_MONITOR}", SystemParams.JSON_FILES, SystemParams.JSON_USERS);
@@ -138,15 +121,15 @@ namespace ECMCS.App
 
         private void MonitorWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            string ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            if (_fileTrackingExtensions.Any(ext.Equals))
-            {
-                if (!Path.GetFileName(e.FullPath).Contains("~$"))
-                {
-                    FileChangeTracking fileCreate = new FileChangeTracking(this, e.FullPath);
-                    _queue.Add(fileCreate);
-                }
-            }
+            //string ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
+            //if (_fileTrackingExtensions.Any(ext.Equals))
+            //{
+            //    if (!Path.GetFileName(e.FullPath).Contains("~$"))
+            //    {
+            //        FileChangeTracking fileCreate = new FileChangeTracking(this, e.FullPath);
+            //        fileCreate.StartFileProcessing();
+            //    }
+            //}
         }
 
         private void MonitorWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -203,6 +186,7 @@ namespace ECMCS.App
         {
             DateTime creation = File.GetCreationTime(filePath);
             DateTime modification = File.GetLastWriteTime(filePath);
+
             if ((modification - creation).TotalSeconds > 1)
             {
                 return true;
@@ -271,7 +255,7 @@ namespace ECMCS.App
 
                     switch (action)
                     {
-                        case "FileShareUrl":
+                        case RouteMessageContants.FILE_SHARE_URL:
                             data = data.Substring(data.LastIndexOf('>') + 1);
                             data = Encryptor.Decrypt(data);
                             data = data.Extract("</", "/>")[0];
@@ -279,6 +263,12 @@ namespace ECMCS.App
                             var delSendMsg = new SendMessenge<(string, Guid)>(frm.EventListener);
                             delSendMsg((_epLiteId, Guid.Parse(data)));
                             frm.Show();
+                            break;
+
+                        case RouteMessageContants.FILE_OPENED:
+                            data = data.Extract("</", "/>")[0];
+                            FileChangeTracking fileCreate = new FileChangeTracking(this, data);
+                            fileCreate.StartFileProcessing();
                             break;
 
                         default:

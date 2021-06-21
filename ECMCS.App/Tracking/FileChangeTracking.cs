@@ -6,7 +6,7 @@ namespace ECMCS.App.Tracking
 {
     public class FileChangeTracking
     {
-        private const int TRACKING_INTERVAL = 3000;
+        private const int TRACKING_INTERVAL = 1000;
         private readonly string _filePath;
         private readonly frmMain _sender;
         private Timer _processTimer;

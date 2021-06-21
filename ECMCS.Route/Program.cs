@@ -29,7 +29,7 @@ namespace ECMCS.Route
 
         private static void Main(string[] args)
         {
-            _messageProvider = new MessageProvider("ECMCS");
+            _messageProvider = new MessageProvider(RouteMessageContants.WINDOW_TITLE);
             _fileDownloader = new FileDownloader();
 
             ShowWindow(GetConsoleWindow(), SW_HIDE);
@@ -56,16 +56,16 @@ namespace ECMCS.Route
             string action = args.Extract("<", ">")[0];
             switch (action)
             {
-                case "Download":
+                case RouteMessageContants.DOWNLOAD:
                     DownloadAction(args);
                     break;
 
-                case "Redirect":
+                case RouteMessageContants.REDIRECT:
                     string epLiteId = GetUserFromDRMLog();
                     RedirectAction(epLiteId);
                     break;
 
-                case "FileShareUrl":
+                case RouteMessageContants.FILE_SHARE_URL:
                     _messageProvider.Send(args);
                     break;
 
