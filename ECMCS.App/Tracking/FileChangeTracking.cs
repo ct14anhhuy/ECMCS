@@ -19,7 +19,7 @@ namespace ECMCS.App.Tracking
 
         public void StartFileProcessing()
         {
-            if (FileHelper.IsFileLocked(_filePath))
+            if (FileHelper.CheckFileLocked(_filePath))
             {
                 _processTimer = new Timer();
                 _processTimer.Interval = TRACKING_INTERVAL;
@@ -35,7 +35,7 @@ namespace ECMCS.App.Tracking
 
         private void _processTimer_Tick(object sender, EventArgs e)
         {
-            if (!FileHelper.IsFileLocked(_filePath))
+            if (!FileHelper.CheckFileLocked(_filePath))
             {
                 _processTimer.Enabled = false;
                 _processTimer.Stop();

@@ -66,7 +66,9 @@ namespace ECMCS.Route
                     break;
 
                 case RouteMessageContants.FILE_SHARE_URL:
-                    _messageProvider.Send(args);
+                    args = args.Substring(args.LastIndexOf('>') + 1);
+                    args = Encryptor.Decrypt(args);
+                    _messageProvider.Send($"<{RouteMessageContants.FILE_SHARE_URL}>{args}");
                     break;
 
                 default:

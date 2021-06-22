@@ -41,7 +41,7 @@ namespace ECMCS.Route
             int checkTimeout = 0;
             while (true)
             {
-                if (FileHelper.IsFileLocked(filePath))
+                if (FileHelper.CheckFileLocked(filePath))
                 {
                     break;
                 }

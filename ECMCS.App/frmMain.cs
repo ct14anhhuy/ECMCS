@@ -30,7 +30,7 @@ namespace ECMCS.App
             ProtocolHelper.Create(SystemParams.PROTOCOL_NAME, _routeAppPath);
             CreateResources();
             ShowBalloonTip("Info", "ECM is running", ToolTipIcon.Info);
-            MonitorWatcher(_monitorPath);
+            UserLoginWatcher(_monitorPath);
             SyncWatcher(SystemParams.SYNC_FILE_PATH);
             _jsonHelper = new JsonHelper();
             _epLiteId = GetCurrentUser();
@@ -102,11 +102,42 @@ namespace ECMCS.App
             Application.ExitThread();
         }
 
-        #region Monitor watcher
-
-        private void MonitorWatcher(string path)
+        public void FileClosed(string fullPath)
         {
-            var monitorWatcher = new FileSystemWatcher
+            string ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLower();
+            if (_fileTrackingExtensions.Any(ext.Equals))
+            {
+                string subPath = Path.GetDirectoryName(fullPath);
+                var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
+                if (IsModifiedFile(fileDownload.FilePath))
+                {
+                    fileDownload.Modifier = _epLiteId;
+                    if (fileDownload != null && !fileDownload.ReadOnly)
+                    {
+                        fileDownload.IsDone = true;
+                        _jsonHelper.Update(fileDownload, x => x.FilePath == fileDownload.FilePath);
+                        OpenUpdateFrm(fileDownload);
+                    }
+                }
+            }
+        }
+
+        private bool IsModifiedFile(string filePath)
+        {
+            DateTime creation = File.GetCreationTime(filePath);
+            DateTime modification = File.GetLastWriteTime(filePath);
+            if ((modification - creation).TotalSeconds > 1)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        #region User login watcher
+
+        private void UserLoginWatcher(string path)
+        {
+            var userLoginWatcher = new FileSystemWatcher
             {
                 Path = path,
                 NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
@@ -115,24 +146,10 @@ namespace ECMCS.App
                 IncludeSubdirectories = true,
                 SynchronizingObject = this
             };
-            monitorWatcher.Created += MonitorWatcher_Created;
-            monitorWatcher.Changed += MonitorWatcher_Changed;
+            userLoginWatcher.Changed += UserLoginWatcher_Changed;
         }
 
-        private void MonitorWatcher_Created(object sender, FileSystemEventArgs e)
-        {
-            //string ext = (Path.GetExtension(e.FullPath) ?? string.Empty).ToLower();
-            //if (_fileTrackingExtensions.Any(ext.Equals))
-            //{
-            //    if (!Path.GetFileName(e.FullPath).Contains("~$"))
-            //    {
-            //        FileChangeTracking fileCreate = new FileChangeTracking(this, e.FullPath);
-            //        fileCreate.StartFileProcessing();
-            //    }
-            //}
-        }
-
-        private void MonitorWatcher_Changed(object sender, FileSystemEventArgs e)
+        private void UserLoginWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             _fireCount++;
             if (_fireCount == 1)
@@ -162,39 +179,7 @@ namespace ECMCS.App
             return null;
         }
 
-        public void FileClosed(string fullPath)
-        {
-            string ext = (Path.GetExtension(fullPath) ?? string.Empty).ToLower();
-            if (_fileTrackingExtensions.Any(ext.Equals))
-            {
-                string subPath = Path.GetDirectoryName(fullPath);
-                var fileDownload = _jsonHelper.Get<FileDownloadDTO>(x => x.FilePath.Contains(subPath) && !x.IsDone).FirstOrDefault();
-                if (IsModifiedFile(fileDownload.FilePath))
-                {
-                    fileDownload.Modifier = _epLiteId;
-                    if (fileDownload != null && !fileDownload.ReadOnly)
-                    {
-                        fileDownload.IsDone = true;
-                        _jsonHelper.Update(fileDownload, x => x.FilePath == fileDownload.FilePath);
-                        OpenUpdateFrm(fileDownload);
-                    }
-                }
-            }
-        }
-
-        private bool IsModifiedFile(string filePath)
-        {
-            DateTime creation = File.GetCreationTime(filePath);
-            DateTime modification = File.GetLastWriteTime(filePath);
-
-            if ((modification - creation).TotalSeconds > 1)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        #endregion Monitor watcher
+        #endregion User login watcher
 
         #region Sync watcher
 
@@ -250,29 +235,25 @@ namespace ECMCS.App
                 int dataType = (int)copyData.dwData;
                 if (dataType == 2)
                 {
-                    string data = Marshal.PtrToStringAnsi(copyData.lpData);
-                    string action = data.Extract("<", ">")[0];
-
+                    string msgContent = Marshal.PtrToStringAnsi(copyData.lpData);
+                    string action = msgContent.Extract("<", ">")[0];
+                    string[] data = msgContent.Extract("</", "/>");
                     switch (action)
                     {
                         case RouteMessageContants.FILE_SHARE_URL:
-                            data = data.Substring(data.LastIndexOf('>') + 1);
-                            data = Encryptor.Decrypt(data);
-                            data = data.Extract("</", "/>")[0];
                             frmDownloadFileShare frm = new frmDownloadFileShare();
                             var delSendMsg = new SendMessenge<(string, Guid)>(frm.EventListener);
-                            delSendMsg((_epLiteId, Guid.Parse(data)));
+                            delSendMsg((_epLiteId, Guid.Parse(data[0])));
                             frm.Show();
                             break;
 
                         case RouteMessageContants.FILE_OPENED:
-                            data = data.Extract("</", "/>")[0];
-                            FileChangeTracking fileCreate = new FileChangeTracking(this, data);
+                            FileChangeTracking fileCreate = new FileChangeTracking(this, data[0]);
                             fileCreate.StartFileProcessing();
                             break;
 
                         default:
-                            break;
+                            throw new Exception($"{action} action is not valid");
                     }
                 }
                 else
