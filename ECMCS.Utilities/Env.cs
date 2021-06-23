@@ -2,6 +2,6 @@
 {
     public static class Env
     {
-        public const bool IS_DEVELOPMENT = true;
+        public const bool IS_DEVELOPMENT = false;
     }
 }

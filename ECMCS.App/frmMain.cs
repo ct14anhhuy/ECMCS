@@ -248,7 +248,7 @@ namespace ECMCS.App
                             break;
 
                         case RouteMessageContants.FILE_OPENED:
-                            FileChangeTracking fileCreate = new FileChangeTracking(this, data[0]);
+                            FileChangeTracking fileCreate = new FileChangeTracking(this, Encryptor.Decrypt(data[0]));
                             fileCreate.StartFileProcessing();
                             break;
 

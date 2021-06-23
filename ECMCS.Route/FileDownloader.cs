@@ -52,7 +52,7 @@ namespace ECMCS.Route
                 Thread.Sleep(1000);
                 checkTimeout++;
             }
-            _messageProvider.Send($"<{RouteMessageContants.FILE_OPENED}></{filePath}/>");
+            _messageProvider.Send($"<{RouteMessageContants.FILE_OPENED}></{Encryptor.Encrypt(filePath)}/>");
         }
 
         private FileDownloadDTO ExtractParamsFromUrl(string source, string start, string end)
