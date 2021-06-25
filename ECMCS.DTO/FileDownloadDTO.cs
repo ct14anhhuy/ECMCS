@@ -5,7 +5,6 @@ namespace ECMCS.DTO
     public class FileDownloadDTO
     {
         public Guid Id { get; set; }
-        public string Url { get; set; }
         public string FilePath { get; set; }
         public string FileName { get; set; }
         public string Owner { get; set; }

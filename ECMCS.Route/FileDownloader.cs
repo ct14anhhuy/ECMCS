@@ -13,6 +13,7 @@ namespace ECMCS.Route
         private readonly string _path = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly JsonHelper _jsonHelper;
         private readonly MessageProvider _messageProvider;
+        private string downloadUrl = string.Empty;
 
         public FileDownloader()
         {
@@ -25,12 +26,12 @@ namespace ECMCS.Route
             string subPath = $@"ECM{DateTime.Now:ddMMyyyyHHmmssfff}\";
             var fileInfo = ExtractParamsFromUrl(url, "</", "/>");
             string path = FileHelper.CreatePath(_path, subPath);
-            string fileName = Path.GetFileName(fileInfo.Url);
+            string fileName = Path.GetFileName(downloadUrl);
             using (WebClient client = new WebClient())
             {
                 fileInfo.FilePath = path + fileName;
                 _jsonHelper.Add(fileInfo);
-                client.DownloadFile(fileInfo.Url, fileInfo.FilePath);
+                client.DownloadFile(downloadUrl, fileInfo.FilePath);
                 FileHelper.OpenFile(fileInfo.FilePath);
                 WaitFileOpened(fileInfo.FilePath);
             }
@@ -61,12 +62,12 @@ namespace ECMCS.Route
             FileDownloadDTO fileInfo = new FileDownloadDTO
             {
                 Id = Guid.Parse(extractedStr[0]),
-                Url = extractedStr[1],
                 Owner = extractedStr[2],
                 Version = extractedStr[3],
                 ReadOnly = bool.Parse(extractedStr[4])
             };
-            fileInfo.FileName = Path.GetFileName(fileInfo.Url);
+            downloadUrl = extractedStr[1];
+            fileInfo.FileName = Path.GetFileName(downloadUrl);
             return fileInfo;
         }
     }
