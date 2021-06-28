@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -45,10 +44,9 @@ namespace ECMCS.Route
         /// <param name="e"></param>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            int exitCode = 1;
             ThreadContext.Properties["appName"] = "ECMCS.Route";
             LogHelper.Error((e.ExceptionObject as Exception).Message);
-            Environment.Exit(exitCode);
+            Environment.Exit(1);
         }
 
         private static void RouteToAction(string args)
@@ -143,14 +141,15 @@ namespace ECMCS.Route
         {
             string currentUser = "";
             string drmLogFile = Environment.Is64BitOperatingSystem ? SystemParams.DRM_LOG_FILE_X64 : SystemParams.DRM_LOG_FILE_X32;
-            foreach (var line in File.ReadLines(drmLogFile).Reverse())
+            var fileContents = File.ReadLines(drmLogFile).Reverse();
+            foreach (var line in fileContents)
             {
+                if (line.Contains("UserID = (null)") || line.Contains("InitInstance") || line.Contains("Status = LOGOUT"))
+                {
+                    throw new Exception("You are not logged in");
+                }
                 if (line.Contains("UserID") && line.Contains("DomainID = 0000000000012514"))
                 {
-                    if (line.Contains("UserID = (null)") || line.Contains("InitInstance"))
-                    {
-                        throw new Exception("You are not logged in");
-                    }
                     currentUser = line.Trim().Substring(line.LastIndexOf(" ") + 1);
                     break;
                 }

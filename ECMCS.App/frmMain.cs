@@ -17,7 +17,7 @@ namespace ECMCS.App
 
     public partial class frmMain : Form
     {
-        private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlsx", ".xlsm", ".csv", ".ppt", ".pptx", ".pdf" };
+        private readonly string[] _fileTrackingExtensions = { ".doc", ".docx", ".xls", ".xlt", ".xlsx", ".xlsm", ".xlsb", ".xltx", ".xltm", ".csv", ".ppt", ".pptx", ".pdf" };
         private readonly string _monitorPath = SystemParams.FILE_PATH_ROOT + SystemParams.FILE_PATH_MONITOR;
         private readonly string _routeAppPath = $@"{Path.GetDirectoryName(Application.ExecutablePath)}\ECMCS.Route.exe";
         private readonly JsonHelper _jsonHelper;

@@ -48,7 +48,7 @@ namespace ECMCS.Route
                 }
                 if (checkTimeout >= 10)
                 {
-                    throw new TimeoutException("Can not open this file");
+                    throw new TimeoutException($"Can not open this file ${filePath}");
                 }
                 Thread.Sleep(1000);
                 checkTimeout++;
