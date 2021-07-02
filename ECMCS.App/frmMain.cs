@@ -252,6 +252,10 @@ namespace ECMCS.App
                             fileCreate.StartFileProcessing();
                             break;
 
+                        case RouteMessageContants.LOGOUT:
+                            Application.Exit();
+                            break;
+
                         default:
                             throw new Exception($"{action} action is not valid");
                     }

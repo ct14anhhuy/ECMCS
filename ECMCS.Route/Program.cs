@@ -70,6 +70,10 @@ namespace ECMCS.Route
                     _messageProvider.Send($"<{RouteMessageContants.FILE_SHARE_URL}>{args}");
                     break;
 
+                case RouteMessageContants.LOGOUT:
+                    _messageProvider.Send($"<{RouteMessageContants.LOGOUT}><//>");
+                    break;
+
                 default:
                     break;
             }
