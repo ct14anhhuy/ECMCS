@@ -14,6 +14,7 @@ namespace ECMCS.Route
         private readonly JsonHelper _jsonHelper;
         private readonly MessageProvider _messageProvider;
         private string downloadUrl = string.Empty;
+        private const int MAX_TIMEOUT = 20;
 
         public FileDownloader()
         {
@@ -46,7 +47,7 @@ namespace ECMCS.Route
                 {
                     break;
                 }
-                if (checkTimeout >= 10)
+                if (checkTimeout >= MAX_TIMEOUT)
                 {
                     throw new TimeoutException($"Can not open this file ${filePath}");
                 }
